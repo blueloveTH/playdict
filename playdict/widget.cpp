@@ -78,7 +78,7 @@ void Widget::shot()
     connect(o, SIGNAL(onScreenshot()), this, SLOT(parse()));
 }
 
-
+/*
 void Widget::parse()
 {
     QByteArray ba;
@@ -96,8 +96,8 @@ void Widget::parse()
 
     connect(manager, &QNetworkAccessManager::finished, this, &Widget::onRequestFinished);
     connect(manager, &QNetworkAccessManager::finished, manager, &QNetworkAccessManager::deleteLater);
-}
-/*
+}*/
+
 void Widget::parse()
 {
     c2tProcess = new QProcess(this);
@@ -106,7 +106,7 @@ void Widget::parse()
 
     QStringList args{"-i", "tmp.png"};
     c2tProcess->start("./Capture2Text/Capture2Text_CLI.exe", args);
-}*/
+}
 
 
 void Widget::onCapture2TextFinished(int code){
