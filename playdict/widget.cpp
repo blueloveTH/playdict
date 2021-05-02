@@ -4,15 +4,6 @@
 #include "qxt/qxtglobalshortcut.h"
 #include <QClipboard>
 #include <QMimeData>
-#include <QDebug>
-#include <QBuffer>
-#include <QObject>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonDocument>
-
-#include <QtWebView>
-
 #include "translator.h"
 
 Widget::Widget(QWidget *parent) :
@@ -21,13 +12,11 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    if(QFile::exists("tmp.png"))
-        QFile::remove("tmp.png");
-
-    QxtGlobalShortcut* shortcut = new QxtGlobalShortcut(QKeySequence("F1"), this);
+    /// 注册快捷键
+    QxtGlobalShortcut* shortcut_1 = new QxtGlobalShortcut(QKeySequence("F1"), this);
     QxtGlobalShortcut* shortcut_2 = new QxtGlobalShortcut(QKeySequence("F2"), this);
     QxtGlobalShortcut* shortcut_3 = new QxtGlobalShortcut(QKeySequence("F3"), this);
-    connect(shortcut, SIGNAL(activated()), this, SLOT(shot()));
+    connect(shortcut_1, SIGNAL(activated()), this, SLOT(shot()));
     connect(shortcut_2, SIGNAL(activated()), this, SLOT(toggleVisible()));
     connect(shortcut_3, SIGNAL(activated()), this, SLOT(close()));
 
@@ -37,17 +26,17 @@ Widget::Widget(QWidget *parent) :
     flags |= Qt::FramelessWindowHint;
     setWindowFlags(flags);
 
+    /// 不抢占焦点
     HWND wid = (HWND)(this->winId());
         SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
 
-    // 加载配置文件
-    QFile file_0("config.json");
-    file_0.open(QIODevice::ReadOnly);
-    QJsonDocument config = QJsonDocument::fromJson(file_0.readAll());
-    access_token = config["access_token"].toString();
-    file_0.close();
+    /// 加载配置文件
+    QFile config_file("config.json");
+    config_file.open(QIODevice::ReadOnly);
+    config = QJsonDocument::fromJson(file_0.readAll());
+    config_file.close();
 
-    // 加载字典
+    /// 加载词典
     QFile file("ecdict.json");
     file.open(QIODevice::ReadOnly);
 
@@ -86,6 +75,7 @@ void Widget::parse()
     QImage("tmp.png").save(&buf, "png");
 
     QNetworkRequest request;
+    access_token = config["access_token"].toString();
     request.setUrl(QUrl("https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic?access_token=" + access_token));
     request.setRawHeader("content-type", "application/x-www-form-urlencoded");
 

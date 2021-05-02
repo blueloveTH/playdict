@@ -10,6 +10,11 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
+#include <QDebug>
+#include <QBuffer>
+#include <QObject>
+
+#include <QtWebView>
 #include <QProcess>
 
 namespace Ui {
@@ -33,7 +38,7 @@ protected:
 
 private:
     Ui::Widget *ui;
-    QString access_token;
+    QJsonDocument config;
 
     QNetworkReply *reply=0;
     QProcess* c2tProcess=0;
