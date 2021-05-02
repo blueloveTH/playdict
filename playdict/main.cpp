@@ -6,11 +6,11 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    /// Force single instance
     QSharedMemory shared("apa");
-    if(shared.attach()) //共享内存被占用则直接返回
+    if(shared.attach())
         return 0;
     shared.create(8);
-
 
     a.setQuitOnLastWindowClosed(false);
 

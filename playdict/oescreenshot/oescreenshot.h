@@ -31,12 +31,6 @@ private:
     void createScreen(const QPoint &pos);
     void destroyScreen(void);
 
-    /**
-     * @brief : 获得当前屏幕的大小
-     * @note  : 这个函数是支持多屏幕的，示例：双屏幕 QRect（-1920, 0, 3840, 1080）
-     * @return: 返回 QRect 引用
-     * @date  : 2017年04月15日
-     */
     const QRect& getScreenRect(void);
 
 

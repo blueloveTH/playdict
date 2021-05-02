@@ -17,15 +17,16 @@ INCLUDEPATH += "oescreenshot/"
 include(qxt/qxt.pri)
 
 SOURCES += main.cpp\
+    jsondict.cpp \
     oescreenshot/oecommonhelper.cpp \
     oescreenshot/oescreenshot.cpp \
-    translator.cpp \
+    recognizer.cpp \
     widget.cpp
 
 HEADERS  += \
     oescreenshot/oecommonhelper.h \
     oescreenshot/oescreenshot.h \
-    translator.h \
+    recognizer.h \
     widget.h
 
 FORMS += \

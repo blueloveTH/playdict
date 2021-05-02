@@ -2,20 +2,20 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonDocument>
 
 #include <QDebug>
 #include <QBuffer>
 #include <QObject>
 
 #include <QtWebView>
-#include <QProcess>
+#include "jsondict.cpp"
+#include "recognizer.h"
+
+#include "ui_widget.h"
+#include "oescreenshot.h"
+#include "qxt/qxtglobalshortcut.h"
+#include <QClipboard>
+#include <QMimeData>
 
 namespace Ui {
 class Widget;
@@ -31,33 +31,22 @@ public:
 
 protected:
     virtual void mousePressEvent(QMouseEvent *);
-    virtual void mouseReleaseEvent(QMouseEvent *e);
     virtual void mouseMoveEvent(QMouseEvent *e);
 
-    virtual void closeEvent(QCloseEvent* event);
+    virtual void closeEvent(QCloseEvent* event){ exit(0); }
 
 private:
     Ui::Widget *ui;
     QJsonDocument config;
-
-    QNetworkReply *reply=0;
-    QProcess* c2tProcess=0;
-
-    QHash<QString, QString> hashMap;
-    QJsonArray dicArray;
+    Recognizer recognizer;
+    JsonDict jsonDict;
 
     QPoint mouseStartPoint, windowTopLeftPoint;
-    bool _drag;
-
-    void wordQueue(QString word);
 
 public slots:
-    void shot();
-    void parse();
-    void onRequestFinished();
-    void toggleVisible();
-
-    void onCapture2TextFinished(int code);
+    void screenShot();
+    void toggleVisible(){ setVisible(!isVisible()); }
+    void onRecognizeFinished(QString word, int code);
 };
 
 #endif // WIDGET_H
