@@ -31,7 +31,7 @@ Widget::Widget(QWidget *parent) :
     cfgFile.close();
 
     /// Load json dictionary
-    jsonDict.load("ecdict.json");
+    QtConcurrent::run([&]{jsonDict.load("ecdict.json");});
 
     /// Setup recognizer
     connect(&recognizer, SIGNAL(finished(QString, int)), this, SLOT(onRecognizeFinished(QString, int)));

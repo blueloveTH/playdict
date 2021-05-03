@@ -6,6 +6,7 @@
 #include <QBuffer>
 #include <QObject>
 #include <QSystemTrayIcon>
+#include <QtConcurrent/QtConcurrentRun>
 
 #include <QHotkey>
 #include <windows.h>

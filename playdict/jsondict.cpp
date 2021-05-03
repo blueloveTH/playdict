@@ -12,6 +12,7 @@
 class JsonDict{
     QHash<QString, QString> hashMap;
     QJsonArray dicArray;
+    bool _loaded = false;
 
 public:
     void load(const QString& filename){
@@ -28,9 +29,16 @@ public:
         }
 
         qDebug() << "Json dict loaded." << hashMap.count();
+        _loaded = true;
+    }
+
+    bool isLoaded(){
+        return _loaded;
     }
 
     QString query(QString word){
+        if(!isLoaded())
+            return "(Dictionary hasn't been loaded)";
         word = word.remove(QRegularExpression("[^a-zA-Z0-9\\s-]+"));
         word = word.trimmed();
 
