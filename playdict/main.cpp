@@ -1,17 +1,16 @@
 #include <QApplication>
+#include <QSharedMemory>
 #include "widget.h"
-#include <QtWebView>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-
     /// Force single instance
     QSharedMemory shared("apa");
     if(shared.attach())
         return 0;
     shared.create(8);
 
+    QApplication a(argc, argv);
     a.setQuitOnLastWindowClosed(false);
 
     Widget w;

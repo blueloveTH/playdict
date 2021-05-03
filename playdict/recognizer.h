@@ -8,7 +8,7 @@ class Recognizer : public QObject
 {
     Q_OBJECT
 
-    QProcess *c2tProcess;
+    QProcess *c2tProcess = nullptr;
     bool _isReady = true;
 
 public:

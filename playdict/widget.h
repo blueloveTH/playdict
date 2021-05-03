@@ -2,20 +2,19 @@
 #define WIDGET_H
 
 #include <QWidget>
-
 #include <QDebug>
 #include <QBuffer>
 #include <QObject>
+#include <QSystemTrayIcon>
 
-#include <QtWebView>
+#include <QHotkey>
+#include <windows.h>
+
 #include "jsondict.cpp"
 #include "recognizer.h"
 
 #include "ui_widget.h"
 #include "oescreenshot.h"
-#include "qxt/qxtglobalshortcut.h"
-#include <QClipboard>
-#include <QMimeData>
 
 namespace Ui {
 class Widget;
@@ -31,12 +30,14 @@ public:
 
 protected:
     virtual void mousePressEvent(QMouseEvent *);
-    virtual void mouseMoveEvent(QMouseEvent *e);
-
-    virtual void closeEvent(QCloseEvent* event){ exit(0); }
+    virtual void mouseMoveEvent(QMouseEvent *);
+    virtual void closeEvent(QCloseEvent *);
 
 private:
-    Ui::Widget *ui;
+    Ui::Widget *ui = nullptr;
+    QList<QHotkey*> hotkeys;
+    QSystemTrayIcon *trayIcon = nullptr;
+
     QJsonDocument config;
     Recognizer recognizer;
     JsonDict jsonDict;

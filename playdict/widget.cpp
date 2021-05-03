@@ -7,12 +7,12 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
 
     /// Shortcuts
-    QxtGlobalShortcut* shortcut_1 = new QxtGlobalShortcut(QKeySequence("F1"), this);
-    QxtGlobalShortcut* shortcut_2 = new QxtGlobalShortcut(QKeySequence("F2"), this);
-    QxtGlobalShortcut* shortcut_3 = new QxtGlobalShortcut(QKeySequence("F3"), this);
-    connect(shortcut_1, SIGNAL(activated()), this, SLOT(screenShot()));
-    connect(shortcut_2, SIGNAL(activated()), this, SLOT(toggleVisible()));
-    connect(shortcut_3, SIGNAL(activated()), this, SLOT(close()));
+    hotkeys.append( new QHotkey(QKeySequence("F1"), true, this) );
+    hotkeys.append( new QHotkey(QKeySequence("F2"), true, this) );
+    hotkeys.append( new QHotkey(QKeySequence("F3"), true, this) );
+    connect(hotkeys[0], SIGNAL(activated()), this, SLOT(screenShot()));
+    connect(hotkeys[1], SIGNAL(activated()), this, SLOT(toggleVisible()));
+    connect(hotkeys[2], SIGNAL(activated()), this, SLOT(close()));
 
     /// Set windows
     Qt::WindowFlags flags = windowFlags();
@@ -35,6 +35,9 @@ Widget::Widget(QWidget *parent) :
 
     /// Setup recognizer
     connect(&recognizer, SIGNAL(finished(QString, int)), this, SLOT(onRecognizeFinished(QString, int)));
+
+    trayIcon = new QSystemTrayIcon(QIcon(QPixmap(32, 32)), this);
+    trayIcon->show();
 }
 
 void Widget::screenShot()
@@ -42,8 +45,8 @@ void Widget::screenShot()
     if(!recognizer.isReady())
         return;
     auto o = OEScreenshot::Instance();
-    connect(o, SIGNAL(onScreenshot()), &recognizer, SLOT(exec()));
-    connect(o, &OEScreenshot::onScreenshot, [=]{
+    connect(o, SIGNAL(finished()), &recognizer, SLOT(exec()));
+    connect(o, &OEScreenshot::finished, [=]{
         ui->textEdit->setText("(Running...)");
         setVisible(true);
         update();
@@ -57,6 +60,12 @@ void Widget::onRecognizeFinished(QString word, int code){
     update();
 }
 
+
+void Widget::closeEvent(QCloseEvent *e){
+    for(int i=0; i<hotkeys.count(); i++)
+        hotkeys[i]->setRegistered(false);
+    exit(0);
+}
 
 Widget::~Widget()
 {
