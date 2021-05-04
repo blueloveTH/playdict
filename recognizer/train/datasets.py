@@ -25,16 +25,18 @@ def transform_grayscale_image(img, img_size):
     return img.unsqueeze_(0)
 
 class TrainDataset(Dataset):
-    def __init__(self, raw_dataset, img_size):
+    def __init__(self, raw_dataset, tokenizer, img_size):
         super().__init__()
         self.raw_dataset = raw_dataset
         self.img_size = img_size
+        self.tokenizer = tokenizer
     
     def __len__(self):
         return len(self.raw_dataset)
     
     def __getitem__(self, i):
         img, tgt = self.raw_dataset[i]
+        tgt = self.tokenizer.string_to_indices(tgt)
         image = transform_grayscale_image(img, self.img_size)
         return image, tgt.astype('int64'), len(tgt)
 

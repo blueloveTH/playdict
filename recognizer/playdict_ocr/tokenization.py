@@ -2,7 +2,7 @@ import numpy as np
 
 class Tokenizer:
     def __init__(self):
-        characters = '0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+        characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -'
         self.i2w = ['<PAD>', '<START>', '<END>'] + list(characters)
         self.w2i = {self.i2w[i]: i for i in range(len(self.i2w))}
 

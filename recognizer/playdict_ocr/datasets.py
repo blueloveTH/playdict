@@ -2,8 +2,8 @@ import pickle
 from tqdm import tqdm
 import pathlib
 import cv2
-from .tokenization import Tokenizer
 import numpy as np
+import multiprocessing.dummy as mp
 
 class RecognizationDataset:
     def __init__(self, data, tgt=None, **kwargs) -> None:
@@ -31,49 +31,67 @@ class RecognizationDataset:
         with open(file, 'rb') as f:
             return pickle.load(f)
 
+class _MjsynthMultiprocessingConverter:
+    def __init__(self, annotation_file, output_file, max_count) -> None:
+        assert output_file[-4:] == '.pkl'
 
-def convert_mjsynth_to_dataset(annotation_file, output_file, max_count=2000000, shuffle=None):
-    assert output_file[-4:] == '.pkl'
+        self.output_file = output_file
+        self.max_count = max_count
 
-    with open(annotation_file) as f:
-        lines = f.readlines()
+        with open(annotation_file) as f:
+            lines = f.readlines()
 
-    if shuffle is None:
-        shuffle = len(lines) > max_count
-    if shuffle:
         np.random.seed(7)
         np.random.shuffle(lines)
 
-    tokenizer = Tokenizer()
+        self.data, self.tgt = [], []
+        self.root_path = pathlib.Path(annotation_file).parent
+        self.part_id = 0
 
-    root_path = pathlib.Path(annotation_file).parent
+        self.lock = mp.Lock()
 
-    data, tgt = [], []
+        # start convertion
+        with mp.Pool(4) as p:
+            with tqdm(total=len(lines)) as pbar:
+                for _ in p.imap_unordered(self.loop, lines):
+                    pbar.update()
+            
 
-    part_id = 0
-    for l in tqdm(lines):
+        # save the rest data
+        if len(self.data) > 0:
+            if self.part_id > 0:
+                filename = self.output_file[:-4] + f'_{self.part_id}.pkl'
+            else:
+                filename = self.output_file
+            RecognizationDataset(self.data, self.tgt).to_pickle(filename)
+
+    def loop(self, l):
         path, _ = l.split(' ')
         label = path.split('_')[1]
         
-        img_path = root_path.joinpath(path[2:])
+        img_path = self.root_path.joinpath(path[2:])
         img = cv2.imread(str(img_path), cv2.IMREAD_GRAYSCALE)
         if img is None:
-            continue
+            return
 
-        data.append(img)
-        tgt.append(tokenizer.string_to_indices(label))
+        self.data.append(img)
+        self.tgt.append(label)
 
-        if len(data) == max_count:
-            filename = output_file[:-4] + f'_{part_id}.pkl'
-            RecognizationDataset(data, tgt).to_pickle(filename)
-            data, tgt = [], []
-            part_id += 1
+        self.lock.acquire()
+        if len(self.data) == self.max_count:
+            filename = self.output_file[:-4] + f'_{self.part_id}.pkl'
+            RecognizationDataset(self.data, self.tgt).to_pickle(filename)
+            self.data, self.tgt = [], []
+            self.part_id += 1
+        self.lock.release()
 
-    if len(data) > 0:
-        if part_id > 0:
-            filename = output_file[:-4] + f'_{part_id}.pkl'
-        else:
-            filename = output_file
-        RecognizationDataset(data, tgt).to_pickle(filename)
+
+def convert_mjsynth_to_dataset(annotation_file, output_file, max_count=2000000):
+    _MjsynthMultiprocessingConverter(annotation_file, output_file, max_count)
+
+__all__ = ['convert_mjsynth_to_dataset', 'RecognizationDataset']
+
+
+
 
     
