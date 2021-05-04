@@ -67,6 +67,7 @@ def convert_mjsynth_to_dataset(annotation_file, output_file, max_count=2000000, 
             filename = output_file[:-4] + f'_{part_id}.pkl'
             RecognizationDataset(data, tgt).to_pickle(filename)
             data, tgt = [], []
+            part_id += 1
 
     if len(data) > 0:
         if part_id > 0:
