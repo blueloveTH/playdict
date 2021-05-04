@@ -12,16 +12,16 @@ class Tokenizer:
     def vocab_size(self):
         return len(self.i2w)
 
-    def string_to_indices(self, s):
+    def string_to_indices(self, s, dtype='uint8'):
         indices = []
         indices.append(self.w2i['<START>'])
-        indices.extend([self.w2i[c] for c in s])
+        indices.extend(map(self.w2i.__getitem__, s))
         indices.append(self.w2i['<END>'])
-        return np.array(indices, dtype='uint8')
+        return np.array(indices, dtype=dtype)
 
     def indices_to_string(self, idx):
         idx = idx[np.where(idx>1)[0]]     # remove <PAD> and <START>
         end_idx = np.where(idx==2)[0]
         if len(end_idx) > 0:
             idx = idx[:end_idx[0]]
-        return ''.join([self.i2w[i] for i in idx])
+        return ''.join(map(self.i2w.__getitem__, idx))

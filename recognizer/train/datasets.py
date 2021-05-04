@@ -36,9 +36,9 @@ class TrainDataset(Dataset):
     
     def __getitem__(self, i):
         img, tgt = self.raw_dataset[i]
-        tgt = self.tokenizer.string_to_indices(tgt)
+        tgt = self.tokenizer.string_to_indices(tgt, dtype='int64')
         image = transform_grayscale_image(img, self.img_size)
-        return image, tgt.astype('int64'), len(tgt)
+        return image, tgt, len(tgt)
 
 
 class TestDataset(Dataset):
