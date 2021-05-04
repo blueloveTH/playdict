@@ -3,6 +3,7 @@
 #### 文件结构
 
 + recognizer
+    + playdict_ocr
     + mjsynth
         + 90kDICT32px
             + ...
@@ -10,8 +11,7 @@
     + train
         + ...
         + train.ipynb
-    + preprocess_0.ipynb
-    + preprocess_1.ipynb
+    + preprocess.ipynb
 
 #### Requirements
 ```txt
@@ -25,6 +25,5 @@ tqdm
 #### 运行说明
 1. 安装所需依赖
 2. 将mjsynth数据集解压到当前目录，删除中间的空层级，仅保留`90kDICT32px`
-3. 运行`preprocess_0.ipynb`
-4. 运行`preprocess_1.ipynb`
-5. 运行`train/train.ipynb`
+3. 运行`preprocess.ipynb`
+4. 运行`train/train.ipynb`

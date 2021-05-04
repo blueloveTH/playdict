@@ -25,20 +25,18 @@ def transform_grayscale_image(img, img_size):
     return img.unsqueeze_(0)
 
 class TrainDataset(Dataset):
-    def __init__(self, df, train_part, img_size):
+    def __init__(self, raw_dataset, img_size):
         super().__init__()
-        self.img_list, idx_list = train_part 
-        self.df = df[['tgt', 'tgt_len']].iloc[idx_list]
-
+        self.raw_dataset = raw_dataset
         self.img_size = img_size
     
     def __len__(self):
-        return len(self.df)
+        return len(self.raw_dataset)
     
     def __getitem__(self, i):
-        tgt, tgt_len = self.df.iloc[i]
-        image = transform_grayscale_image(self.img_list[i], self.img_size)
-        return image, tgt.astype('int64'), tgt_len
+        img, tgt = self.raw_dataset[i]
+        image = transform_grayscale_image(img, self.img_size)
+        return image, tgt.astype('int64'), len(tgt)
 
 
 class TestDataset(Dataset):

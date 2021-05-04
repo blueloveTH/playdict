@@ -6,7 +6,7 @@ class Tokenizer:
         self.i2w = ['<PAD>', '<START>', '<END>'] + list(characters)
         self.w2i = {self.i2w[i]: i for i in range(len(self.i2w))}
 
-        print(self.w2i)
+        #print(self.w2i)
 
     @property
     def vocab_size(self):
