@@ -32,7 +32,7 @@ class RecognizationDataset:
             return pickle.load(f)
 
 class _MjsynthMultiprocessingConverter:
-    def __init__(self, annotation_file, output_file, max_count) -> None:
+    def __init__(self, annotation_file, output_file, max_count, num_workers) -> None:
         assert output_file[-4:] == '.pkl'
 
         self.output_file = output_file
@@ -51,7 +51,7 @@ class _MjsynthMultiprocessingConverter:
         self.lock = mp.Lock()
 
         # start convertion
-        with mp.Pool(4) as p:
+        with mp.Pool(num_workers) as p:
             with tqdm(total=len(lines)) as pbar:
                 for _ in p.imap_unordered(self.loop, lines):
                     pbar.update()
@@ -74,10 +74,11 @@ class _MjsynthMultiprocessingConverter:
         if img is None:
             return
 
+        self.lock.acquire()
+
         self.data.append(img)
         self.tgt.append(label)
 
-        self.lock.acquire()
         if len(self.data) == self.max_count:
             filename = self.output_file[:-4] + f'_{self.part_id}.pkl'
             RecognizationDataset(self.data, self.tgt).to_pickle(filename)
@@ -86,8 +87,8 @@ class _MjsynthMultiprocessingConverter:
         self.lock.release()
 
 
-def convert_mjsynth_to_dataset(annotation_file, output_file, max_count=2000000):
-    _MjsynthMultiprocessingConverter(annotation_file, output_file, max_count)
+def convert_mjsynth_to_dataset(annotation_file, output_file, max_count=2000000, num_workers=8):
+    _MjsynthMultiprocessingConverter(annotation_file, output_file, max_count, num_workers)
 
 __all__ = ['convert_mjsynth_to_dataset', 'RecognizationDataset']
 
