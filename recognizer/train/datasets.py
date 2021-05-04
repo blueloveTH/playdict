@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import torchvision.transforms.functional as tF
 import pickle
+import pandas as pd
 
 '''
 def load_image(path, img_size, fn=None):
@@ -39,6 +40,26 @@ class TrainDataset(Dataset):
         tgt = self.tokenizer.string_to_indices(tgt, dtype='int64')
         image = transform_grayscale_image(img, self.img_size)
         return image, tgt, len(tgt)
+
+class PartitionedTrainDataset(TrainDataset):
+    def __init__(self, file_list, cnt_list, tokenizer, img_size):
+        self.file_list = file_list
+        self.cnt_list = cnt_list
+        raw_dataset = pd.read_pickle(file_list[0])
+        super().__init__(raw_dataset, tokenizer, img_size)
+
+    def __len__(self):
+        return sum(self.cnt_list)
+
+    def __getitem__(self, i):
+        if self.cnt_list[0] == 0:
+            self.cnt_list.pop(0)
+            self.file_list.pop(0)
+            self.raw_dataset = pd.read_pickle(self.file_list[0])
+            
+        self.cnt_list[0] -= 1
+        return super().__getitem__(i)
+
 
 
 class TestDataset(Dataset):

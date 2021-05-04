@@ -7,7 +7,7 @@ from easyocr_model.modules import VGG_FeatureExtractor, ResNet_FeatureExtractor
 class Encoder(nn.Module):
     def __init__(self, CFG):
         super().__init__()
-        self.cnn = ResNet_FeatureExtractor(input_channel=1, output_channel=CFG.encoder_dim)
+        self.cnn = VGG_FeatureExtractor(input_channel=1, output_channel=CFG.encoder_dim)
 
     def forward(self, x):
         return self.cnn(x)
@@ -46,6 +46,7 @@ class DecoderWithAttention(nn.Module):
         self.max_dec_len = max_dec_len
 
         self.decode_step = nn.LSTMCell(embed_dim + encoder_dim, decoder_dim, bias=True)
+
         self.init_h = nn.Linear(encoder_dim, decoder_dim)
         self.init_c = nn.Linear(encoder_dim, decoder_dim)
 

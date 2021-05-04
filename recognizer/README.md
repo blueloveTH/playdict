@@ -17,7 +17,7 @@
 ```txt
 torch
 torch_optimizer
-keras4torch==1.1.8
+keras4torch==1.2.0
 opencv-python
 tqdm
 ```
