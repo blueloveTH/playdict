@@ -11,6 +11,12 @@
 deploy
 playdict.exe
 
+mjsynth*
+__pycache__
+saved_model
+preprocessed
+
+
 # Qt-es
 object_script.*.Release
 object_script.*.Debug
