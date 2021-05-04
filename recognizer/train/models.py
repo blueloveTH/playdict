@@ -69,7 +69,7 @@ class DecoderWithAttention(nn.Module):
         # tgt: [None, ?]   int64
         # memory: [None, num_pixels, encoder_dim]
         # tgt_lens: [None]  int64
-        batch_size, *_ = memory.shape
+        batch_size = memory.size(0)
         tgt = self.embedding(tgt)  # [bs, max_tgt_len, embed_dim]
 
         h, c = self.init_hidden_state(memory)  # (batch_size, decoder_dim)
@@ -77,7 +77,7 @@ class DecoderWithAttention(nn.Module):
         output = torch.zeros(batch_size, tgt_lens[0], self.vocab_size, device=memory.device)
         output[:, 0, 1] = 1.0
         
-        rng = torch.empty([tgt_lens[0]], dtype=torch.long, device=memory.device)
+        rng = torch.empty(tgt_lens[0], dtype=torch.long, device=memory.device)
         for i in range(1, len(tgt_lens)):
             rng[tgt_lens[i]: tgt_lens[i-1]] = i
         rng[1: tgt_lens[-1]] = len(tgt_lens)
@@ -97,7 +97,7 @@ class DecoderWithAttention(nn.Module):
         return output
     
     def predict(self, memory):
-        batch_size, *_ = memory.shape
+        batch_size = memory.size(0)
 
         curr_token = torch.ones(batch_size, dtype=torch.long, device=memory.device)
         curr_token = self.embedding(curr_token)  # [bs, embed_dim]
