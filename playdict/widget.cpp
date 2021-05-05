@@ -30,8 +30,9 @@ Widget::Widget(QWidget *parent) :
     config = QJsonDocument::fromJson(cfgFile.readAll());
     cfgFile.close();
 
-    /// Load json dictionary
-    QtConcurrent::run([&]{jsonDict.load("ecdict.json");});
+    /// Load dictionary
+    /// QtConcurrent::run([&]{jsonDict.load("ecdict.json");});
+    connect(&bingDict, &BingDict::finished, this, &Widget::onQueryFinished);
 
     /// Setup recognizer
     connect(&recognizer, SIGNAL(finished(QString, int)), this, SLOT(onRecognizeFinished(QString, int)));
@@ -42,7 +43,7 @@ Widget::Widget(QWidget *parent) :
 
 void Widget::screenShot()
 {
-    if(!recognizer.isReady())
+    if(!recognizer.isReady() || !bingDict.isReady())
         return;
     auto o = OEScreenshot::Instance();
     connect(o, SIGNAL(finished()), &recognizer, SLOT(exec()));
@@ -56,7 +57,11 @@ void Widget::screenShot()
 
 void Widget::onRecognizeFinished(QString word, int code){
     QFile::remove("tmp.png");
-    ui->textEdit->setText(jsonDict.query(word));
+    bingDict.query(word);
+}
+
+void Widget::onQueryFinished(QString result){
+    ui->textEdit->setText(result);
     update();
 }
 

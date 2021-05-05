@@ -7,11 +7,12 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 #include <QtConcurrent/QtConcurrentRun>
+#include <QJsonDocument>
 
 #include <QHotkey>
 #include <windows.h>
 
-#include "jsondict.cpp"
+#include "bingdict.h"
 #include "recognizer.h"
 
 #include "ui_widget.h"
@@ -41,7 +42,7 @@ private:
 
     QJsonDocument config;
     Recognizer recognizer;
-    JsonDict jsonDict;
+    BingDict bingDict;
 
     QPoint mouseStartPoint, windowTopLeftPoint;
 
@@ -49,6 +50,7 @@ public slots:
     void screenShot();
     void toggleVisible(){ setVisible(!isVisible()); }
     void onRecognizeFinished(QString word, int code);
+    void onQueryFinished(QString result);
 };
 
 #endif // WIDGET_H

@@ -5,7 +5,6 @@
 #-------------------------------------------------
 QT       += core gui
 QT       += network
-QT       += webview
 
 CONFIG   += C++11
 DESTDIR   = ../bin
@@ -18,11 +17,12 @@ include(QHotkey-1.4.2/qhotkey.pri)
 include(oescreenshot/oescreenshot.pri)
 
 SOURCES += main.cpp\
-    jsondict.cpp \
+    bingdict.cpp \
     recognizer.cpp \
     widget.cpp
 
 HEADERS  += \
+    bingdict.h \
     recognizer.h \
     widget.h
 
