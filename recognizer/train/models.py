@@ -7,7 +7,7 @@ from easyocr_model.modules import VGG_FeatureExtractor, ResNet_FeatureExtractor
 class Encoder(nn.Module):
     def __init__(self, CFG):
         super().__init__()
-        self.cnn = VGG_FeatureExtractor(input_channel=1, output_channel=CFG.encoder_dim)
+        self.cnn = ResNet_FeatureExtractor(input_channel=1, output_channel=CFG.encoder_dim)
 
     def forward(self, x):
         return self.cnn(x)
