@@ -7,7 +7,7 @@ from easyocr_model.modules import VGG_FeatureExtractor, ResNet_FeatureExtractor
 class Encoder(nn.Module):
     def __init__(self, CFG):
         super().__init__()
-        self.cnn = ResNet_FeatureExtractor(input_channel=1, output_channel=CFG.encoder_dim)
+        self.cnn = VGG_FeatureExtractor(input_channel=1, output_channel=CFG.encoder_dim)
 
     def forward(self, x):
         return self.cnn(x)
@@ -33,6 +33,23 @@ class Attention(nn.Module):
         return (memory * alpha).sum(dim=1)                  # [bs, memory_dim]
 
 
+class DecodeSteps(nn.Module):
+    def __init__(self, input_size, hidden_size, num_cells):
+        super().__init__()
+        self.cells = nn.ModuleList([nn.LSTMCell(input_size, hidden_size) for _ in range(num_cells)])
+        self.hidden_size = hidden_size
+
+    def forward(self, x, t):
+        h = torch.zeros(x.size(0), self.hidden_size, device=x.device)
+        c = torch.zeros(x.size(0), self.hidden_size, device=x.device)
+        for cell in self.cells:
+            h_, c_ = cell(x, t)
+            h += h_
+            c += c_
+        return h / len(self.cells), c / len(self.cells)
+        
+
+
 class DecoderWithAttention(nn.Module):
     def __init__(self, attention_dim, embed_dim, decoder_dim, vocab_size, max_dec_len, encoder_dim, dropout):
         super().__init__()
@@ -46,6 +63,7 @@ class DecoderWithAttention(nn.Module):
         self.max_dec_len = max_dec_len
 
         self.decode_step = nn.LSTMCell(embed_dim + encoder_dim, decoder_dim, bias=True)
+        #self.decode_step = DecodeSteps(embed_dim + encoder_dim, decoder_dim, num_cells=4)
 
         self.init_h = nn.Linear(encoder_dim, decoder_dim)
         self.init_c = nn.Linear(encoder_dim, decoder_dim)
