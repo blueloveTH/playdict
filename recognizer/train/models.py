@@ -2,17 +2,6 @@ import torch.nn.functional as F
 import torch
 import torch.nn as nn
 
-from easyocr_model.modules import VGG_FeatureExtractor, ResNet_FeatureExtractor
-
-class Encoder(nn.Module):
-    def __init__(self, CFG):
-        super().__init__()
-        self.cnn = VGG_FeatureExtractor(input_channel=1, output_channel=CFG.encoder_dim)
-
-    def forward(self, x):
-        return self.cnn(x)
-
-
 class Attention(nn.Module):
     def __init__(self, memory_dim, hidden_dim, attn_dim):
         super().__init__()
@@ -34,24 +23,20 @@ class Attention(nn.Module):
 
 
 class DecodeSteps(nn.Module):
-    def __init__(self, input_size, hidden_size, num_cells):
+    def __init__(self, input_size, hidden_size, num_layers):
         super().__init__()
-        self.cells = nn.ModuleList([nn.LSTMCell(input_size, hidden_size) for _ in range(num_cells)])
-        self.hidden_size = hidden_size
+        self.cells = nn.ModuleList([nn.LSTMCell(input_size, hidden_size) for _ in range(num_layers)])
 
     def forward(self, x, t):
-        h = torch.zeros(x.size(0), self.hidden_size, device=x.device)
-        c = torch.zeros(x.size(0), self.hidden_size, device=x.device)
+        h, c = t
         for cell in self.cells:
-            h_, c_ = cell(x, t)
-            h += h_
-            c += c_
-        return h / len(self.cells), c / len(self.cells)
+            h, c = cell(x, (h, c))
+        return h, c
         
 
 
 class DecoderWithAttention(nn.Module):
-    def __init__(self, attention_dim, embed_dim, decoder_dim, vocab_size, max_dec_len, encoder_dim, dropout):
+    def __init__(self, attention_dim, embed_dim, decoder_dim, vocab_size, max_dec_len, encoder_dim):
         super().__init__()
         self.encoder_dim = encoder_dim
         self.attention_dim = attention_dim
@@ -62,8 +47,8 @@ class DecoderWithAttention(nn.Module):
         self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
         self.max_dec_len = max_dec_len
 
-        self.decode_step = nn.LSTMCell(embed_dim + encoder_dim, decoder_dim, bias=True)
-        #self.decode_step = DecodeSteps(embed_dim + encoder_dim, decoder_dim, num_cells=4)
+        #self.decode_step = nn.LSTMCell(embed_dim + encoder_dim, decoder_dim)
+        self.decode_step = DecodeSteps(embed_dim + encoder_dim, decoder_dim, num_layers=2)
 
         self.init_h = nn.Linear(encoder_dim, decoder_dim)
         self.init_c = nn.Linear(encoder_dim, decoder_dim)
@@ -73,10 +58,7 @@ class DecoderWithAttention(nn.Module):
             nn.Sigmoid()
         )
 
-        self.fc = nn.Sequential(
-            nn.Dropout(dropout),
-            nn.Linear(decoder_dim, vocab_size),
-        )
+        self.fc = nn.Linear(decoder_dim, vocab_size)
 
     def init_hidden_state(self, memory):
         memory = memory.mean(dim=1)         # [bs, encoder_dim]
@@ -143,20 +125,24 @@ class DecoderWithAttention(nn.Module):
 
 
 class EncoderDecoderModel(nn.Module):
-    def __init__(self, CFG, tokenizer):
+    def __init__(self, encoder, CFG, tokenizer):
         super().__init__()
 
-        self.encoder = Encoder(CFG)
+        self.encoder = encoder
         self.decoder = DecoderWithAttention(attention_dim=CFG.attention_dim,
                                     embed_dim=CFG.embed_dim,
                                     decoder_dim=CFG.decoder_dim,
                                     vocab_size=tokenizer.vocab_size,
                                     encoder_dim=CFG.encoder_dim,
-                                    dropout=CFG.dropout,
                                     max_dec_len=CFG.max_dec_len)
 
     def forward(self, src, tgt=None, tgt_lens=None):
-        memory = self.encoder(src)
+        memory = self.encoder(src)              # NCHW
+
+        memory = memory.permute(0, 3, 1, 2)     # NWCH
+        memory = F.adaptive_avg_pool2d(memory, (None, 1))
+        memory = memory.squeeze(-1)             # NWC
+
         if tgt is None:
             return self.decoder.predict(memory)
         return self.decoder(tgt, memory, tgt_lens=tgt_lens)

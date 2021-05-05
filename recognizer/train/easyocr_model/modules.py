@@ -114,10 +114,7 @@ class VGG_FeatureExtractor(nn.Module):
             nn.Conv2d(self.output_channel[3], self.output_channel[3], 2, 1, 0), nn.ReLU(True))
 
     def forward(self, x):
-        x = self.ConvNet(x)         # NCHW
-        x = x.permute(0, 3, 1, 2)   # NWCH
-        x = F.adaptive_avg_pool2d(x, (None, 1))
-        return x.squeeze(-1)        # NWC
+        return self.ConvNet(x)
 
 class ResNet_FeatureExtractor(nn.Module):
     """ FeatureExtractor of FAN (http://openaccess.thecvf.com/content_ICCV_2017/papers/Cheng_Focusing_Attention_Towards_ICCV_2017_paper.pdf) """
@@ -127,10 +124,7 @@ class ResNet_FeatureExtractor(nn.Module):
         self.ConvNet = ResNet(input_channel, output_channel, BasicBlock, [1, 2, 5, 3])
 
     def forward(self, x):
-        x = self.ConvNet(x)         # NCHW
-        x = x.permute(0, 3, 1, 2)   # NWCH
-        x = F.adaptive_avg_pool2d(x, (None, 1))
-        return x.squeeze(-1)        # NWC
+        return self.ConvNet(x)
 
 class BasicBlock(nn.Module):
     expansion = 1
