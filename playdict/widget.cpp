@@ -62,7 +62,7 @@ void Widget::onQueryFinished(QString result){
 void Widget::closeEvent(QCloseEvent *e){
     for(int i=0; i<hotkeys.count(); i++)
         hotkeys[i]->setRegistered(false);
-    PythonEnv::Finalize();
+    //PythonEnv::Finalize();
     exit(0);
 }
 

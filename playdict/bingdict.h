@@ -6,8 +6,8 @@
 #include <QDomDocument>
 #include <QDomNode>
 #include <QtConcurrent/QtConcurrentRun>
-
-#include "pythonenv.h"
+//#include "pythonenv.h"
+#include "httplib.h"
 
 class BingDict : public QObject
 {
@@ -20,7 +20,9 @@ class BingDict : public QObject
     QList<int> findAllIndex(const QString& pattern_str, const QString&, int);
     QString subStringDiv(QString text, int startPos);
 
-    PyObject *pyQueryFunc;
+    //PyObject *pyQueryFunc;
+
+    httplib::Client *client;
 
 signals:
     void finished(QString);
