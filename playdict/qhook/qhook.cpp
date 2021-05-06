@@ -40,7 +40,7 @@ bool QHook::isMouseHooked(){ return p_MouseHook->isHooked(); }
  * while returning `false` will block the event
  */
 
-bool QHook::mouseMoveEvent(QHookMouseEvent *event){ return true; }
+
 bool QHook::mousePressEvent(QHookMouseEvent *event){
     emit mousePressed(event);
     return true;

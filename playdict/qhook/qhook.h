@@ -20,7 +20,6 @@ public:
 
     bool isMouseHooked();
 
-    virtual bool mouseMoveEvent(QHookMouseEvent *event);
     virtual bool mousePressEvent(QHookMouseEvent *event);
     virtual bool mouseReleaseEvent(QHookMouseEvent *event);
 

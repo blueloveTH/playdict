@@ -7,13 +7,12 @@ LRESULT CALLBACK mouseHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     if(nCode >= 0)
     {
-
         MSLLHOOKSTRUCT *p = (MSLLHOOKSTRUCT*) lParam;
         bool result = true;
 
-        int flags;
+        int flags = 0;
         flags |= (p->flags & LLMHF_INJECTED) ? QHookMouseEvent::Injected: 0;
-
+/*
         if(wParam == WM_LBUTTONDOWN)
             result = QHook::Instance()->mousePressEvent(new QHookMouseEvent(QHookMouseEvent::Button, QHookMouseEvent::LeftButton, QPoint(p->pt.x, p->pt.y), flags));
         else if(wParam == WM_LBUTTONUP)
@@ -23,14 +22,11 @@ LRESULT CALLBACK mouseHookProc(int nCode, WPARAM wParam, LPARAM lParam)
             result = QHook::Instance()->mousePressEvent(new QHookMouseEvent(QHookMouseEvent::Button, QHookMouseEvent::RightButton, QPoint(p->pt.x, p->pt.y), flags));
         else if(wParam == WM_RBUTTONUP)
             result = QHook::Instance()->mouseReleaseEvent(new QHookMouseEvent(QHookMouseEvent::Button, QHookMouseEvent::RightButton, QPoint(p->pt.x, p->pt.y), flags));
-
+*/
         if(wParam == WM_MBUTTONDOWN)
             result = QHook::Instance()->mousePressEvent(new QHookMouseEvent(QHookMouseEvent::Button, QHookMouseEvent::MiddleButton, QPoint(p->pt.x, p->pt.y), flags));
         else if(wParam == WM_MBUTTONUP)
             result = QHook::Instance()->mouseReleaseEvent(new QHookMouseEvent(QHookMouseEvent::Button, QHookMouseEvent::MiddleButton, QPoint(p->pt.x, p->pt.y), flags));
-
-        if(wParam == WM_MOUSEMOVE)
-            result = QHook::Instance()->mouseMoveEvent(new QHookMouseEvent(QHookMouseEvent::Move, QHookMouseEvent::RightButton, QPoint(p->pt.x, p->pt.y), flags));
 
         if(!result)
             return 1;

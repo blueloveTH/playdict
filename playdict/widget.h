@@ -48,6 +48,20 @@ private:
 
     QPoint mouseStartPoint, windowTopLeftPoint;
 
+    void RegisterShortcuts(){
+        hotkeys.append( new QHotkey(QKeySequence("F1"), true, this) );
+        hotkeys.append( new QHotkey(QKeySequence("F2"), true, this) );
+        hotkeys.append( new QHotkey(QKeySequence("F3"), true, this) );
+        connect(hotkeys[0], SIGNAL(activated()), this, SLOT(screenShot()));
+        connect(hotkeys[1], SIGNAL(activated()), this, SLOT(toggleVisible()));
+        connect(hotkeys[2], SIGNAL(activated()), this, SLOT(close()));
+
+        connect(QHook::Instance(), &QHook::mousePressed, [&](QHookMouseEvent *e){
+            if(e->button()==QHookMouseEvent::MiddleButton)
+                screenShot();
+        });
+    }
+
 public slots:
     bool screenShot();
     void toggleVisible(){ setVisible(!isVisible()); }

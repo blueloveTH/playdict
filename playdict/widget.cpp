@@ -6,21 +6,6 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    /// Shortcuts
-    hotkeys.append( new QHotkey(QKeySequence("F1"), true, this) );
-    hotkeys.append( new QHotkey(QKeySequence("F2"), true, this) );
-    hotkeys.append( new QHotkey(QKeySequence("F3"), true, this) );
-    connect(hotkeys[0], SIGNAL(activated()), this, SLOT(screenShot()));
-    connect(hotkeys[1], SIGNAL(activated()), this, SLOT(toggleVisible()));
-    connect(hotkeys[2], SIGNAL(activated()), this, SLOT(close()));
-
-    connect(QHook::Instance(), &QHook::mousePressed, [=](QHookMouseEvent *e){
-        if(e->button()==QHookMouseEvent::MiddleButton)
-            screenShot();
-    });
-
-    //connect(ui->miniButton, SIGNAL(pressed()), this, SLOT(toggleVisible()));
-
     /// Set windows
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowStaysOnTopHint;
@@ -37,14 +22,13 @@ Widget::Widget(QWidget *parent) :
     config = QJsonDocument::fromJson(cfgFile.readAll());
     cfgFile.close();
 
-    /// Load dictionary
     connect(&bingDict, &BingDict::finished, this, &Widget::onQueryFinished);
-
-    /// Setup recognizer
     connect(&recognizer, SIGNAL(finished(QString, int)), this, SLOT(onRecognizeFinished(QString, int)));
 
     trayIcon = new QSystemTrayIcon(QIcon(QPixmap(32, 32)), this);
     trayIcon->show();
+
+    RegisterShortcuts();
 }
 
 bool Widget::screenShot()
