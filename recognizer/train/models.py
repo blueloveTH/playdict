@@ -124,6 +124,9 @@ class DecoderWithAttention(nn.Module):
         return output
 
 
+def count_params(module):
+    return sum([p.numel() for p in module.parameters()])
+
 class EncoderDecoderModel(nn.Module):
     def __init__(self, encoder, CFG, tokenizer):
         super().__init__()
@@ -135,13 +138,14 @@ class EncoderDecoderModel(nn.Module):
                                     vocab_size=tokenizer.vocab_size,
                                     encoder_dim=CFG.encoder_dim,
                                     max_dec_len=CFG.max_dec_len)
+        print('Encoder:', count_params(self.encoder))
+        print('Decoder:', count_params(self.decoder))
 
     def forward(self, src, tgt=None, tgt_lens=None):
         memory = self.encoder(src)              # NCHW
 
         memory = memory.permute(0, 3, 1, 2)     # NWCH
-        memory = F.adaptive_avg_pool2d(memory, (None, 1))
-        memory = memory.squeeze(-1)             # NWC
+        memory = memory.mean(dim=-1)            # NWC
 
         if tgt is None:
             return self.decoder.predict(memory)
