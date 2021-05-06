@@ -1,5 +1,14 @@
 #include "bingdict.h"
 
+BingDict::BingDict(){
+    connect(this, &BingDict::finished, [&]{_isReady=true;});
+    PythonEnv::Instance();
+
+    auto bingdict = PyImport_ImportModule("bingdict");
+    if(bingdict==nullptr) exit(300);
+    pyQueryFunc = PyObject_GetAttrString(bingdict, "fetch_html");
+}
+
 QList<QStringList> BingDict::findAll(const QString& pattern_str, const QString& text, int offset=0){
     QList<QStringList> results;
     QRegExp pattern(pattern_str);
@@ -63,8 +72,8 @@ QString BingDict::subStringDiv(QString text, int startPos){
     return "";
 }
 
-void BingDict::onReply(QNetworkReply *reply){
-    QString html = QString(reply->readAll());
+void BingDict::onReply(QByteArray bytes){
+    QString html = QString(bytes);
     QString return_str = current_query + '\n';
 
     /// clean
@@ -123,11 +132,13 @@ void BingDict::query(QString q){
     _isReady = false;
     current_query = q = q.trimmed();
 
-    QNetworkRequest request;
-    request.setUrl(QUrl("https://cn.bing.com/dict/clientsearch?mkt=zh-CN&setLang=zh&q=" + q));
+    QtConcurrent::run([=]{
+        PyObject* pArgs = PyTuple_New(1);
+        PyTuple_SetItem(pArgs, 0, Py_BuildValue("s", q.toLatin1().data()));
 
-    QNetworkReply *reply = manager.get(request);
-    connect(reply, &QNetworkReply::finished, [=]{onReply(reply);});
-    connect(reply, &QNetworkReply::finished, [=]{reply->deleteLater();});
+        PyObject* pReturn = PyEval_CallObject(pyQueryFunc, pArgs);
+        char *result = PyBytes_AsString(pReturn);
+        onReply(QByteArray(result));
+    });
 }
 

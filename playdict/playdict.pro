@@ -4,12 +4,11 @@
 #
 #-------------------------------------------------
 QT       += core gui
-QT       += network
 QT       += xml
+QT       += widgets
 
-CONFIG   += C++17
+CONFIG   += C++14
 DESTDIR   = ../bin
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = playdict
 TEMPLATE = app
@@ -20,14 +19,19 @@ include(qhook/qhook.pri)
 
 SOURCES += main.cpp\
     bingdict.cpp \
+    pythonenv.cpp \
     recognizer.cpp \
     widget.cpp
 
 HEADERS  += \
     bingdict.h \
+    pythonenv.h \
     recognizer.h \
     widget.h
 
 FORMS += \
     widget.ui
 
+INCLUDEPATH += D:\miniconda\envs\playdict_qt\include
+
+LIBS += -LD:\miniconda\envs\playdict_qt\libs -lpython38
