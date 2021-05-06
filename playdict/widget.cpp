@@ -21,7 +21,6 @@ Widget::Widget(QWidget *parent) :
 
     //connect(ui->miniButton, SIGNAL(pressed()), this, SLOT(toggleVisible()));
 
-
     /// Set windows
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowStaysOnTopHint;
@@ -39,7 +38,6 @@ Widget::Widget(QWidget *parent) :
     cfgFile.close();
 
     /// Load dictionary
-    /// QtConcurrent::run([&]{jsonDict.load("ecdict.json");});
     connect(&bingDict, &BingDict::finished, this, &Widget::onQueryFinished);
 
     /// Setup recognizer
@@ -80,6 +78,7 @@ void Widget::onQueryFinished(QString result){
 void Widget::closeEvent(QCloseEvent *e){
     for(int i=0; i<hotkeys.count(); i++)
         hotkeys[i]->setRegistered(false);
+    PythonEnv::Finalize();
     exit(0);
 }
 

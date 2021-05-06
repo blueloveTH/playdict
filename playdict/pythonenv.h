@@ -15,15 +15,18 @@ class PythonEnv : public QObject
 
     static PythonEnv *_instance;
 
-    explicit PythonEnv(QObject *parent = nullptr);
+    explicit PythonEnv();
 public:
-    static PythonEnv* Instance(){
-        if(_instance == nullptr)
-            _instance = new PythonEnv;
-        return _instance;
+    static PythonEnv* Instance(){return _instance;}
+    static void Initialize(){
+        _instance = new PythonEnv();
     }
 
-    ~PythonEnv(){Py_Finalize();}
+    static void Finalize(){
+        delete _instance;
+    }
+
+    ~PythonEnv();
 
 
 

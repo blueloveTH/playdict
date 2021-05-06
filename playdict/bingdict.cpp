@@ -2,8 +2,6 @@
 
 BingDict::BingDict(){
     connect(this, &BingDict::finished, [&]{_isReady=true;});
-    PythonEnv::Instance();
-
     auto bingdict = PyImport_ImportModule("bingdict");
     if(bingdict==nullptr) exit(300);
     pyQueryFunc = PyObject_GetAttrString(bingdict, "fetch_html");

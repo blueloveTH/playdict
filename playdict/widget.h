@@ -43,6 +43,7 @@ private:
 
     QJsonDocument config;
     Recognizer recognizer;
+
     BingDict bingDict;
 
     QPoint mouseStartPoint, windowTopLeftPoint;
