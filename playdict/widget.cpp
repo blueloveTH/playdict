@@ -62,6 +62,8 @@ void Widget::onRecognizeFinished(QString word, int code){
 
 void Widget::onQueryFinished(QString result){
     ui->textEdit->setText(result);
+    ui->textEdit->setFixedHeight(ui->textEdit->document()->size().height());
+    setFixedHeight(ui->textEdit->height()+10);
     update();
 }
 

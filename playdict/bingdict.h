@@ -6,15 +6,20 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QList>
+#include <QDomDocument>
+#include <QDomNode>
 
 class BingDict : public QObject
 {
     Q_OBJECT
 
     QNetworkReply *reply = nullptr;
-    QList<QStringList> findAll(QRegExp&, const QString&);
     bool _isReady = true;
     QString current_query;
+
+    QList<QStringList> findAll(const QString& pattern_str, const QString&, int);
+    QList<int> findAllIndex(const QString& pattern_str, const QString&, int);
+    QString subStringDiv(QString text, int startPos);
 
 signals:
     void finished(QString);

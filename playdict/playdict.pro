@@ -5,8 +5,9 @@
 #-------------------------------------------------
 QT       += core gui
 QT       += network
+QT       += xml
 
-CONFIG   += C++11
+CONFIG   += C++17
 DESTDIR   = ../bin
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
