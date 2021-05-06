@@ -63,7 +63,7 @@ QString BingDict::subStringDiv(QString text, int startPos){
     return "";
 }
 
-void BingDict::onRequestFinished(){
+void BingDict::onReply(QNetworkReply *reply){
     QString html = QString(reply->readAll());
     QString return_str = current_query + '\n';
 
@@ -126,11 +126,8 @@ void BingDict::query(QString q){
     QNetworkRequest request;
     request.setUrl(QUrl("https://cn.bing.com/dict/clientsearch?mkt=zh-CN&setLang=zh&q=" + q));
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager;
-
-    connect(manager, &QNetworkAccessManager::finished, manager, &QNetworkAccessManager::deleteLater);
-    connect(manager, &QNetworkAccessManager::finished, this, &BingDict::onRequestFinished);
-
-    reply = manager->get(request);
+    QNetworkReply *reply = manager.get(request);
+    connect(reply, &QNetworkReply::finished, [=]{onReply(reply);});
+    connect(reply, &QNetworkReply::finished, [=]{reply->deleteLater();});
 }
 

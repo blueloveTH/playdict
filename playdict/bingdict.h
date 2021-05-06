@@ -13,9 +13,9 @@ class BingDict : public QObject
 {
     Q_OBJECT
 
-    QNetworkReply *reply = nullptr;
     bool _isReady = true;
     QString current_query;
+    QNetworkAccessManager manager;
 
     QList<QStringList> findAll(const QString& pattern_str, const QString&, int);
     QList<int> findAllIndex(const QString& pattern_str, const QString&, int);
@@ -32,7 +32,7 @@ public:
     bool isReady(){ return _isReady; }
 
 private slots:
-    void onRequestFinished();
+    void onReply(QNetworkReply*);
 };
 
 #endif // BINGDICT_H
