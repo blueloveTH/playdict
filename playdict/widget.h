@@ -17,6 +17,7 @@
 
 #include "ui_widget.h"
 #include "oescreenshot.h"
+#include "qhook.h"
 
 namespace Ui {
 class Widget;
@@ -47,7 +48,7 @@ private:
     QPoint mouseStartPoint, windowTopLeftPoint;
 
 public slots:
-    void screenShot();
+    bool screenShot();
     void toggleVisible(){ setVisible(!isVisible()); }
     void onRecognizeFinished(QString word, int code);
     void onQueryFinished(QString result);

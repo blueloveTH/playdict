@@ -16,6 +16,7 @@ TEMPLATE = app
 
 include(QHotkey-1.4.2/qhotkey.pri)
 include(oescreenshot/oescreenshot.pri)
+include(qhook/qhook.pri)
 
 SOURCES += main.cpp\
     bingdict.cpp \

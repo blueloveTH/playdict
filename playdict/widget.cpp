@@ -14,6 +14,14 @@ Widget::Widget(QWidget *parent) :
     connect(hotkeys[1], SIGNAL(activated()), this, SLOT(toggleVisible()));
     connect(hotkeys[2], SIGNAL(activated()), this, SLOT(close()));
 
+    connect(QHook::Instance(), &QHook::mousePressed, [=](QHookMouseEvent *e){
+        if(e->button()==QHookMouseEvent::MiddleButton)
+            screenShot();
+    });
+
+    //connect(ui->miniButton, SIGNAL(pressed()), this, SLOT(toggleVisible()));
+
+
     /// Set windows
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowStaysOnTopHint;
@@ -41,10 +49,10 @@ Widget::Widget(QWidget *parent) :
     trayIcon->show();
 }
 
-void Widget::screenShot()
+bool Widget::screenShot()
 {
     if(!recognizer.isReady() || !bingDict.isReady())
-        return;
+        return false;
     auto o = OEScreenshot::Instance();
     connect(o, SIGNAL(finished()), &recognizer, SLOT(exec()));
     connect(o, &OEScreenshot::finished, [=]{
@@ -52,6 +60,7 @@ void Widget::screenShot()
         setVisible(true);
         update();
     });
+    return true;
 }
 
 
@@ -87,6 +96,7 @@ void Widget::mousePressEvent(QMouseEvent *event)
     {
         mouseStartPoint = event->globalPos();
         windowTopLeftPoint = this->frameGeometry().topLeft();
+        event->accept();
     }
 }
 
@@ -96,5 +106,6 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
     {
         QPoint diff = event->globalPos() - mouseStartPoint;
         this->move(windowTopLeftPoint + diff);
+        event->accept();
     }
 }

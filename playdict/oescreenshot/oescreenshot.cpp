@@ -62,6 +62,7 @@ void OEScreenshot::mousePressEvent(QMouseEvent *e) {
     if (e->button() == Qt::LeftButton) {
         createScreen(e->pos());
         isLeftPressed_ = true;
+        e->accept();
         return ;
     }
 }
@@ -76,14 +77,17 @@ void OEScreenshot::mouseReleaseEvent(QMouseEvent *e) {
         destroyScreen();
         close();
 
+        e->accept();
         emit finished();
     }
 }
 
 void OEScreenshot::mouseMoveEvent(QMouseEvent *e) {
     if (isLeftPressed_){
-        if(screenTool_ != nullptr)
+        if(screenTool_ != nullptr){
             screenTool_->onMouseChange(e->x(), e->y());
+            e->accept();
+        }
         update();
     }
 }
