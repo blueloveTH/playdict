@@ -23,7 +23,7 @@ Widget::Widget(QWidget *parent) :
     //cfgFile.close();
 
     connect(&bingDict, &BingDict::finished, this, &Widget::onQueryFinished);
-    connect(&recognizer, SIGNAL(finished(QString, int)), this, SLOT(onRecognizeFinished(QString, int)));
+    connect(&recognizer, SIGNAL(finished(QString)), this, SLOT(onRecognizeFinished(QString)));
 
     trayIcon = new QSystemTrayIcon(QIcon(QPixmap(32, 32)), this);
     trayIcon->show();
@@ -38,7 +38,7 @@ bool Widget::screenShot()
         return false;
     timeList.clear();
     auto o = OEScreenshot::Instance();
-    connect(o, SIGNAL(finished()), &recognizer, SLOT(exec()));
+    connect(o, &OEScreenshot::finished, &recognizer, &Recognizer::exec);
     connect(o, &OEScreenshot::finished, [=]{
         ui->textEdit->setText("(Running...)");
         setVisible(true);
@@ -49,9 +49,8 @@ bool Widget::screenShot()
 }
 
 
-void Widget::onRecognizeFinished(QString word, int code){
+void Widget::onRecognizeFinished(QString word){
     timeList.append(clock());
-    QFile::remove("tmp.png");
     bingDict.query(word);
 }
 

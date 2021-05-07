@@ -16,16 +16,15 @@ TEMPLATE = app
 include(QHotkey-1.4.2/qhotkey.pri)
 include(oescreenshot/oescreenshot.pri)
 include(qhook/qhook.pri)
+include(onnxruntime-1.7.0/onnxruntime.pri)
 
 SOURCES += main.cpp\
     bingdict.cpp \
-    #pythonenv.cpp \
     recognizer.cpp \
     widget.cpp
 
 HEADERS  += \
     bingdict.h \
-    #pythonenv.h \
     recognizer.h \
     widget.h \
     httplib.h

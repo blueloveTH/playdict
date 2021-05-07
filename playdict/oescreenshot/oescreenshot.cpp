@@ -78,13 +78,13 @@ void OEScreenshot::mouseReleaseEvent(QMouseEvent *e) {
              && e->button() == Qt::LeftButton) {
         isLeftPressed_ = false;
 
-        screenTool_->onSaveScreen();
+        QPixmap map = screenTool_->saveScreen();
 
         destroyScreen();
         close();
 
         e->accept();
-        emit finished();
+        emit finished(map);
     }
 }
 

@@ -19,11 +19,8 @@ void OEScreen::paintEvent(QPaintEvent *) {
 }
 
 
-void OEScreen::onSaveScreen(void) {
-    QClipboard *board = QApplication::clipboard();
-    QPixmap map = originPainting_->copy(currentRect_);
-    board->setPixmap(map);
-    map.save("tmp.png");
+QPixmap OEScreen::saveScreen(void) {
+    return originPainting_->copy(currentRect_);
 }
 
 void OEScreen::onMouseChange(int x, int y) {

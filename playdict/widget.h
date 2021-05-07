@@ -72,7 +72,7 @@ private slots:
 public slots:
     bool screenShot();
     void toggleVisible(){ setVisible(!isVisible()); }
-    void onRecognizeFinished(QString word, int code);
+    void onRecognizeFinished(QString word);
     void onQueryFinished(QString result);
 };
 

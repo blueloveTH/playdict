@@ -3,6 +3,10 @@
 
 #include <QObject>
 #include <QProcess>
+#include <QtDebug>
+#include <QPixmap>
+#include <QImage>
+#include "onnxruntime_cxx_api.h"
 
 class Recognizer : public QObject
 {
@@ -11,18 +15,17 @@ class Recognizer : public QObject
     QProcess *c2tProcess = nullptr;
     bool _isReady = true;
 
+    Ort::Session *session;
+
 public:
     explicit Recognizer(QObject *parent = nullptr);
     bool isReady(){ return _isReady; }
 
 signals:
-    void finished(QString word, int code);
+    void finished(QString word);
 
 public slots:
-    void exec();
-
-private slots:
-    void onCapture2TextFinished(int code);
+    void exec(QPixmap map);
 };
 
 #endif // RECOGNIZER_H

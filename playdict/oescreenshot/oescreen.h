@@ -4,7 +4,6 @@
 #include <QPainter>
 #include <QScreen>
 #include <QWidget>
-#include <QClipboard>
 #include <QApplication>
 
 #include <windows.h>
@@ -26,7 +25,7 @@ protected:
 
 public slots:
     void onMouseChange(int x,int y);
-    void onSaveScreen(void);
+    QPixmap saveScreen(void);
 
 private:
     QPoint          originPoint_;

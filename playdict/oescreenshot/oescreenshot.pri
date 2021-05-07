@@ -1,5 +1,3 @@
-CONFIG += C++11
-
 HEADERS += $$PUBLIC_HEADERS \
 	$$PWD/oescreen.h \
 	$$PWD/oescreenshot.h

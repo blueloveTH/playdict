@@ -1,5 +1,3 @@
-CONFIG += C++11
-
 win32:LIBS += -luser32
 
 SOURCES += $$PWD/qhook.cpp \

@@ -1,3 +1,4 @@
+from numpy import fabs
 import torch.nn.functional as F
 import torch
 import torch.nn as nn
@@ -141,7 +142,15 @@ class EncoderDecoderModel(nn.Module):
         print('Encoder:', count_params(self.encoder))
         print('Decoder:', count_params(self.decoder))
 
+        self.deploy_mode = False;
+
+    def deploy(self):
+        self.deploy_mode = True
+
     def forward(self, src, tgt=None, tgt_lens=None):
+        if(self.deploy_mode):
+            return self.predict_for_deploy(src)
+
         memory = self.encoder(src)              # NCHW
 
         memory = memory.permute(0, 3, 1, 2)     # NWCH
@@ -150,4 +159,13 @@ class EncoderDecoderModel(nn.Module):
         if tgt is None:
             return self.decoder.predict(memory)
         return self.decoder(tgt, memory, tgt_lens=tgt_lens)
+
+    def predict_for_deploy(self, src):
+        memory = self.encoder(src)              # NCHW
+
+        memory = memory.permute(0, 3, 1, 2)     # NWCH
+        memory = memory.mean(dim=-1)            # NWC
+
+        logits = self.decoder.predict(memory)
+        return logits.argmax(-1)
         
