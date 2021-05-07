@@ -1,7 +1,7 @@
 #include "oescreen.h"
 
-OEScreen::OEScreen(std::shared_ptr<QPixmap> originPainting, QPoint pos, QWidget *parent)
-    : QWidget(parent), originPoint_(pos), originPainting_(originPainting) {
+OEScreen::OEScreen(std::shared_ptr<QPixmap> originPainting, QPoint pos, QColor borderColor, QWidget *parent)
+    : QWidget(parent), originPoint_(pos), originPainting_(originPainting), borderColor(borderColor) {
 
     HWND wid = (HWND)(this->winId());
         SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
@@ -9,12 +9,11 @@ OEScreen::OEScreen(std::shared_ptr<QPixmap> originPainting, QPoint pos, QWidget 
 
 void OEScreen::paintEvent(QPaintEvent *) {
     QPainter painter(this);
-    /// 绘制截屏编辑窗口
+
     painter.drawPixmap(QPoint(0,0),
        *originPainting_, currentRect_);
 
-    /// 绘制边框线
-    QPen pen(QColor(0,174,255), 4);
+    QPen pen(borderColor, 6);
     painter.setPen(pen);
     painter.drawRect(rect());
 }

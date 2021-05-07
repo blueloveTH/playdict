@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
         return 0;
     shared.create(8);
 
-    //PythonEnv::Initialize();
     QApplication a(argc, argv);
     a.setQuitOnLastWindowClosed(false);
 

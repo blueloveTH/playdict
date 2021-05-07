@@ -4,10 +4,13 @@ BingDict::BingDict(){
     connect(this, &BingDict::finished, [&]{_isReady=true;});
 
     client = new httplib::Client("http://cn.bing.com");
+    client->set_connection_timeout(3);
 
-    //auto bingdict = PyImport_ImportModule("bingdict");
-    //if(bingdict==nullptr) exit(300);
-    //pyQueryFunc = PyObject_GetAttrString(bingdict, "fetch_html");
+    //client->set_keep_alive(true);
+    //client->set_decompress(true);
+    //client->set_default_headers({
+    //  { "Accept-Encoding", "gzip, deflate, br" }
+    //});
 }
 
 QList<QStringList> BingDict::findAll(const QString& pattern_str, const QString& text, int offset=0){
@@ -133,27 +136,26 @@ void BingDict::query(QString q){
     _isReady = false;
     current_query = q = q.trimmed();
 
-    clock_t startTime = clock();
-
     QtConcurrent::run([=]{
-
         QString url = "/dict/clientsearch?mkt=zh-CN&setLang=zh&q=";
         url += q;
-        auto res = client->Get(url.toLatin1().data());
+        std::string body;
+        bool isOk = false;
+        client->Get(url.toLatin1().data(),
+                               [&](const httplib::Response &res) {
+                                 isOk = res.status == 200;
+                                 return isOk;
+                               },
+                               [&](const char *data, size_t data_length) {
+                                 body.append(data, data_length);
+                                 return body.size() < 85000;
+                               });
         const char *result;
-        if(res->status==200)
-            result = res->body.data();
+        if(isOk)
+            result = body.data();
         else
             result = QString("(Connection error)").toLatin1().data();
-
-        /*PyObject* pArgs = PyTuple_New(1);
-        PyTuple_SetItem(pArgs, 0, Py_BuildValue("s", q.toLatin1().data()));
-
-        PyObject* pReturn = PyEval_CallObject(pyQueryFunc, pArgs);
-        char *result = PyBytes_AsString(pReturn);*/
-
         onReply(QByteArray(result));
-        qDebug()<<clock()-startTime;
     });
 }
 

@@ -6,7 +6,6 @@
 #include <QDomDocument>
 #include <QDomNode>
 #include <QtConcurrent/QtConcurrentRun>
-//#include "pythonenv.h"
 #include "httplib.h"
 
 class BingDict : public QObject

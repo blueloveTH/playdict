@@ -35,7 +35,6 @@ void OEScreenshot::initGlobalScreen(void) {
     originPainting_.reset(new QPixmap(screen->grabWindow(0, desktopRect.x(),
                         desktopRect.y(), desktopRect.width(),
                         desktopRect.height())));
-
     /// Create a dark background
     QPixmap dim_pix(desktopRect.width(), desktopRect.height());
     dim_pix.fill((QColor(0, 0, 0, 24)));
@@ -45,7 +44,14 @@ void OEScreenshot::initGlobalScreen(void) {
 }
 
 void OEScreenshot::createScreen(const QPoint &pos) {
-    screenTool_.reset(new OEScreen(originPainting_, pos, this));
+    QColor bkgColor = originPainting_->toImage().pixel(pos);
+    QColor borderColor;
+    if(bkgColor.lightnessF() > 0.5)
+        borderColor = QColor(30, 30, 30);
+    else
+        borderColor = QColor(207, 207, 207);
+
+    screenTool_.reset(new OEScreen(originPainting_, pos, borderColor, this));
 }
 
 void OEScreenshot::destroyScreen() {

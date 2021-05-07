@@ -17,7 +17,7 @@ protected:
 
 public:
 
-    explicit OEScreen(std::shared_ptr<QPixmap> originPainting, QPoint pos, QWidget *parent = 0);
+    explicit OEScreen(std::shared_ptr<QPixmap>, QPoint, QColor, QWidget *parent = 0);
 
     ~OEScreen() { }
 
@@ -32,5 +32,6 @@ private:
     QPoint          originPoint_;
     std::shared_ptr<QPixmap> originPainting_;
     QRect           currentRect_;
+    QColor          borderColor;
 };
 #endif // OESCREEN_H

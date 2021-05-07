@@ -17,10 +17,10 @@ Widget::Widget(QWidget *parent) :
         SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
 
     /// Load config file
-    QFile cfgFile("config.json");
-    cfgFile.open(QIODevice::ReadOnly);
-    config = QJsonDocument::fromJson(cfgFile.readAll());
-    cfgFile.close();
+    //QFile cfgFile("config.json");
+    //cfgFile.open(QIODevice::ReadOnly);
+    //config = QJsonDocument::fromJson(cfgFile.readAll());
+    //cfgFile.close();
 
     connect(&bingDict, &BingDict::finished, this, &Widget::onQueryFinished);
     connect(&recognizer, SIGNAL(finished(QString, int)), this, SLOT(onRecognizeFinished(QString, int)));
@@ -28,30 +28,40 @@ Widget::Widget(QWidget *parent) :
     trayIcon = new QSystemTrayIcon(QIcon(QPixmap(32, 32)), this);
     trayIcon->show();
 
-    RegisterShortcuts();
+    connect(this, SIGNAL(initialized()), this, SLOT(RegisterShortcuts()));
+    QtConcurrent::run([=]{Sleep(300);emit initialized();});
 }
 
 bool Widget::screenShot()
 {
     if(!recognizer.isReady() || !bingDict.isReady())
         return false;
+    timeList.clear();
     auto o = OEScreenshot::Instance();
     connect(o, SIGNAL(finished()), &recognizer, SLOT(exec()));
     connect(o, &OEScreenshot::finished, [=]{
         ui->textEdit->setText("(Running...)");
         setVisible(true);
         update();
+        timeList.append(clock());
     });
     return true;
 }
 
 
 void Widget::onRecognizeFinished(QString word, int code){
+    timeList.append(clock());
     QFile::remove("tmp.png");
     bingDict.query(word);
 }
 
 void Widget::onQueryFinished(QString result){
+    timeList.append(clock());
+    clock_t cost_0 = timeList[1] - timeList[0];
+    clock_t cost_1 = timeList[2] - timeList[1];
+    result += QString("\nRe: ") + QString::number(cost_0) + "ms";
+    result += QString("\tSe: ") + QString::number(cost_1) + "ms";
+
     ui->textEdit->setText(result);
     ui->textEdit->setFixedHeight(ui->textEdit->document()->size().height());
     setFixedHeight(ui->textEdit->height()+10);
@@ -62,7 +72,7 @@ void Widget::onQueryFinished(QString result){
 void Widget::closeEvent(QCloseEvent *e){
     for(int i=0; i<hotkeys.count(); i++)
         hotkeys[i]->setRegistered(false);
-    //PythonEnv::Finalize();
+    delete trayIcon;
     exit(0);
 }
 

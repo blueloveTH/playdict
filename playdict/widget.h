@@ -42,14 +42,19 @@ private:
     Ui::Widget *ui = nullptr;
     QList<QHotkey*> hotkeys;
     QSystemTrayIcon *trayIcon = nullptr;
+    QList<clock_t> timeList;
 
-    QJsonDocument config;
+    //QJsonDocument config;
     Recognizer recognizer;
 
     BingDict bingDict;
 
     QPoint mouseStartPoint, windowTopLeftPoint;
 
+signals:
+    void initialized();
+
+private slots:
     void RegisterShortcuts(){
         hotkeys.append( new QHotkey(QKeySequence("F1"), true, this) );
         hotkeys.append( new QHotkey(QKeySequence("F2"), true, this) );
