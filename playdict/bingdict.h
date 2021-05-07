@@ -7,6 +7,7 @@
 #include <QDomNode>
 #include <QtConcurrent/QtConcurrentRun>
 #include "httplib.h"
+#include "wordinfo.h"
 
 class BingDict : public QObject
 {

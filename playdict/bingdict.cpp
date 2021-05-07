@@ -78,35 +78,32 @@ QString BingDict::subStringDiv(QString text, int startPos){
 
 void BingDict::onReply(QByteArray bytes){
     QString html = QString(bytes);
-    QString return_str = current_query + '\n';
+
+    WordInfo wordinfo(current_query);
 
     /// clean
     QString cls_pattern = "<div class=\"client_def_container\">";
     int idx = html.indexOf(cls_pattern);
     if (idx < 0){
-        emit finished(return_str + "(No result)");
+        emit finished(wordinfo.noResult());
         return;
     }
 
     /// pronunciation
     auto pron_matches = findAll("<div class=\"client_def_hd_pn\" lang=\"en\">.*</div>", html.left(idx));
-    QString pron_str = "";
     QDomDocument doc;
     for(int i=0;i<pron_matches.count();i++){
         doc.setContent(pron_matches[i][0]);
         QDomNodeList list=doc.elementsByTagName("div");
         QString text = list.at(0).toElement().text();
         if(text.contains('['))
-            pron_str += text + ' ';
+            wordinfo.pronunciation.append(text);
     }
 
     /// def container
     html = subStringDiv(html, idx);
 
-    if(!pron_str.isEmpty())
-        return_str += pron_str + '\n';
-
-    /// define
+    /// definition
     QList<int> defMatches = findAllIndex("<div class=\"client_def_bar\">", html);
 
     QRegExp titlePattern("<span class=\"client_def_title[_web]*\">(.*)</span>");
@@ -126,10 +123,10 @@ void BingDict::onReply(QByteArray bytes){
         for(auto str_list : listMatches)
             content += str_list[0];
 
-        return_str += title + '\t' + content + '\n';
+        wordinfo.definition.append(QPair<QString, QString>(title, content));
     }
 
-    emit finished(return_str.trimmed());
+    emit finished(wordinfo.simpleResult());
 }
 
 void BingDict::query(QString q){

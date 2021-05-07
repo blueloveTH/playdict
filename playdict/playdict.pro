@@ -27,7 +27,8 @@ HEADERS  += \
     bingdict.h \
     recognizer.h \
     widget.h \
-    httplib.h
+    httplib.h \
+    wordinfo.h
 
 FORMS += \
     widget.ui

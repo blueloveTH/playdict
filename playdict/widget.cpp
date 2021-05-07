@@ -16,12 +16,6 @@ Widget::Widget(QWidget *parent) :
     HWND wid = (HWND)(this->winId());
         SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
 
-    /// Load config file
-    //QFile cfgFile("config.json");
-    //cfgFile.open(QIODevice::ReadOnly);
-    //config = QJsonDocument::fromJson(cfgFile.readAll());
-    //cfgFile.close();
-
     connect(&bingDict, &BingDict::finished, this, &Widget::onQueryFinished);
     connect(&recognizer, SIGNAL(finished(QString)), this, SLOT(onRecognizeFinished(QString)));
 
@@ -72,6 +66,7 @@ void Widget::closeEvent(QCloseEvent *e){
     for(int i=0; i<hotkeys.count(); i++)
         hotkeys[i]->setRegistered(false);
     delete trayIcon;
+    e->accept();
     exit(0);
 }
 
