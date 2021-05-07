@@ -6,6 +6,7 @@
 #include <QtDebug>
 #include <QPixmap>
 #include <QImage>
+#include <QtConcurrent/QtConcurrentRun>
 #include "onnxruntime_cxx_api.h"
 
 class Recognizer : public QObject
@@ -16,6 +17,8 @@ class Recognizer : public QObject
     bool _isReady = true;
 
     Ort::Session *session;
+
+    QString model_predict(const QPixmap &map);
 
 public:
     explicit Recognizer(QObject *parent = nullptr);

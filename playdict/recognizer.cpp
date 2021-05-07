@@ -12,11 +12,7 @@ Recognizer::Recognizer(QObject *parent) : QObject(parent)
     session = new Ort::Session(env, model_path, session_options);
 }
 
-void Recognizer::exec(QPixmap map){
-    if(!_isReady)
-        return;
-    _isReady = false;
-
+QString Recognizer::model_predict(const QPixmap& map){
     auto img = map.toImage();
     img.convertTo(QImage::Format_Grayscale8);
     img = img.scaled(128, 32);
@@ -44,13 +40,25 @@ void Recognizer::exec(QPixmap map){
     int element_cnt = output_list.front().GetTensorTypeAndShapeInfo().GetElementCount();
 
     QString mapping = "???0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -";
+
     QString word = "";
+
     for(int i=0; i<element_cnt; i++){
         if(seq[i] < 2) continue;
         if(seq[i] == 2) break;
         word += mapping[seq[i]];
     }
+    return word;
+}
 
-    emit finished(word);
-    _isReady = true;
+void Recognizer::exec(QPixmap map){
+    if(!_isReady)
+        return;
+    _isReady = false;
+
+    QtConcurrent::run([=]{
+        QString word = model_predict(map);
+        _isReady = true;
+        emit finished(word);
+    });
 }
