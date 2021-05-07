@@ -34,7 +34,7 @@ bool Widget::screenShot()
     auto o = OEScreenshot::Instance();
     connect(o, &OEScreenshot::finished, &recognizer, &Recognizer::exec);
     connect(o, &OEScreenshot::finished, [=]{
-        ui->textEdit->setText("(Running...)");
+        ui->titleBar->setText("(Running...)");
         setVisible(true);
         update();
         timeList.append(clock());
@@ -48,16 +48,40 @@ void Widget::onRecognizeFinished(QString word){
     bingDict.query(word);
 }
 
-void Widget::onQueryFinished(QString result){
+void Widget::onQueryFinished(const WordInfo& wi){
     timeList.append(clock());
     clock_t cost_0 = timeList[1] - timeList[0];
     clock_t cost_1 = timeList[2] - timeList[1];
-    result += QString("\nRe: ") + QString::number(cost_0) + "ms";
-    result += QString("\tSe: ") + QString::number(cost_1) + "ms";
+    QString extraStr = "";
+    extraStr += QString("\nRe: ") + QString::number(cost_0) + "ms";
+    extraStr += QString("\tSe: ") + QString::number(cost_1) + "ms";
 
-    ui->textEdit->setText(result);
-    ui->textEdit->setFixedHeight(ui->textEdit->document()->size().height());
-    setFixedHeight(ui->textEdit->height()+10);
+    updateUi(wi);
+}
+
+void Widget::updateUi(const WordInfo &wi){
+    ui->titleBar->setText(wi.word);
+    ui->pronBar->setText(wi.pronResult());
+
+    while(!bars.empty()){
+        delete bars.back();
+        bars.pop_back();
+    }
+
+    int x = 20;
+    int y = 108;
+
+    if(ui->pronBar->text().isEmpty())
+        y = ui->pronBar->pos().y();
+
+    for(const auto &def : qAsConst(wi.definition)){
+        auto bar = new UiDefinitionBar(this, x, y, def);
+        y += bar->height() + 6;
+        bars.append(bar);
+    }
+
+    setFixedHeight(y+20);
+
     update();
 }
 

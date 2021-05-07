@@ -13,13 +13,14 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include "ui_widget.h"
 
 #include "bingdict.h"
 #include "recognizer.h"
 
-#include "ui_widget.h"
 #include "oescreenshot.h"
 #include "qhook.h"
+#include "uidefbar.h"
 
 namespace Ui {
 class Widget;
@@ -44,7 +45,9 @@ private:
     QSystemTrayIcon *trayIcon = nullptr;
     QList<clock_t> timeList;
 
-    //QJsonDocument config;
+    QList<UiDefinitionBar*> bars;
+    void updateUi(const WordInfo&);
+
     Recognizer recognizer;
 
     BingDict bingDict;
@@ -73,7 +76,7 @@ public slots:
     bool screenShot();
     void toggleVisible(){ setVisible(!isVisible()); }
     void onRecognizeFinished(QString word);
-    void onQueryFinished(QString result);
+    void onQueryFinished(const WordInfo &wi);
 };
 
 #endif // WIDGET_H

@@ -26,13 +26,10 @@ SOURCES += main.cpp\
 HEADERS  += \
     bingdict.h \
     recognizer.h \
+    uidefbar.h \
     widget.h \
     httplib.h \
     wordinfo.h
 
 FORMS += \
     widget.ui
-
-#INCLUDEPATH += D:\miniconda\envs\playdict_qt\include
-
-#LIBS += -LD:\miniconda\envs\playdict_qt\libs -lpython38

@@ -25,7 +25,7 @@ class BingDict : public QObject
     httplib::Client *client;
 
 signals:
-    void finished(QString);
+    void finished(const WordInfo&);
 
 public:
     BingDict();

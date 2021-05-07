@@ -11,6 +11,8 @@ BingDict::BingDict(){
     //client->set_default_headers({
     //  { "Accept-Encoding", "gzip, deflate, br" }
     //});
+
+    qRegisterMetaType<WordInfo>("WordInfo");
 }
 
 QList<QStringList> BingDict::findAll(const QString& pattern_str, const QString& text, int offset=0){
@@ -85,7 +87,7 @@ void BingDict::onReply(QByteArray bytes){
     QString cls_pattern = "<div class=\"client_def_container\">";
     int idx = html.indexOf(cls_pattern);
     if (idx < 0){
-        emit finished(wordinfo.noResult());
+        emit finished(wordinfo);
         return;
     }
 
@@ -126,7 +128,7 @@ void BingDict::onReply(QByteArray bytes){
         wordinfo.definition.append(QPair<QString, QString>(title, content));
     }
 
-    emit finished(wordinfo.simpleResult());
+    emit finished(wordinfo);
 }
 
 void BingDict::query(QString q){
