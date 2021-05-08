@@ -20,11 +20,13 @@ include(onnxruntime-1.7.0/onnxruntime.pri)
 
 SOURCES += main.cpp\
     bingdict.cpp \
+    detector.cpp \
     recognizer.cpp \
     widget.cpp
 
 HEADERS  += \
     bingdict.h \
+    detector.h \
     recognizer.h \
     uidefbar.h \
     widget.h \

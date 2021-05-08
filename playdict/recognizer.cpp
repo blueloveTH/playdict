@@ -18,18 +18,16 @@ QString Recognizer::model_predict(const QPixmap& map){
     img = img.scaled(128, 32);
 
     size_t input_size = 1 * 1 * 32 * 128;
-    std::vector<float> x_test(input_size);
+    std::vector<uchar> x_test(input_size);
 
     for(uint i=0; i<input_size; i++){
-        float pix = (float)img.constBits()[i];
-        pix = (pix/255.0 - 0.449) / 0.226;
-        x_test[i] = pix;
+        x_test[i] = img.constBits()[i];
     }
 
     auto input_dims = session->GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape();
 
     auto memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
-    Ort::Value input_tensor = Ort::Value::CreateTensor<float>(memory_info, x_test.data(), input_size, input_dims.data(), 4);
+    Ort::Value input_tensor = Ort::Value::CreateTensor<uchar>(memory_info, x_test.data(), input_size, input_dims.data(), 4);
 
     std::vector<const char*> input_node_names = {"x"};
     std::vector<const char*> output_node_names = {"sequence"};
@@ -48,6 +46,7 @@ QString Recognizer::model_predict(const QPixmap& map){
         if(seq[i] == 2) break;
         word += mapping[seq[i]];
     }
+
     return word;
 }
 

@@ -148,6 +148,9 @@ class EncoderDecoderModel(nn.Module):
         self.deploy_mode = True
 
     def forward(self, src, tgt=None, tgt_lens=None):
+        src = src.float() / 255
+        src = (src - 0.449) / 0.226
+
         if(self.deploy_mode):
             return self.predict_for_deploy(src)
 

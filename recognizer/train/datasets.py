@@ -21,8 +21,7 @@ def load_image(path, img_size, fn=None):
 
 def transform_grayscale_image(img, img_size):
     img = cv2.resize(img, dsize=img_size, interpolation=cv2.INTER_NEAREST)
-    img = torch.from_numpy(img).float() / 255
-    img = (img - 0.449) / 0.226
+    img = torch.from_numpy(img)
     return img.unsqueeze_(0)
 
 class TrainDataset(Dataset):
