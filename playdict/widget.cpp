@@ -69,9 +69,8 @@ void Widget::onQueryFinished(const WordInfo& wi){
 
     updateUi(wi);
 
-    setVisible(false);
-    update();
     move(targetPoint());
+    update();
     setVisible(true);
 
     /*
