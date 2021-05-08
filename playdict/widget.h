@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 
 #include <QHotkey>
+#include <QPropertyAnimation>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -53,6 +54,19 @@ private:
     BingDict bingDict;
 
     QPoint mouseStartPoint, windowTopLeftPoint;
+    QRect targetRect;
+
+    QPoint targetPoint(){
+        QRect rect = targetRect;
+        auto desktopSize = QApplication::desktop()->size();
+        bool leftTag = rect.center().x()<desktopSize.width()/2;
+        bool upTag = rect.center().y()<desktopSize.height()/2;
+        if( leftTag &&  upTag) return rect.bottomRight();
+        if( leftTag && !upTag) return rect.topRight()-QPoint(0,height());
+        if(!leftTag &&  upTag) return rect.bottomLeft()-QPoint(width(),0);
+        if(!leftTag && !upTag) return rect.topLeft()-QPoint(width(),height());
+        return QPoint(0, 0);
+    }
 
 signals:
     void initialized();

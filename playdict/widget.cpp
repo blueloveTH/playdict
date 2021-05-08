@@ -35,9 +35,18 @@ bool Widget::screenShot()
     timeList.clear();
     auto o = OEScreenshot::Instance();
     connect(o, &OEScreenshot::finished, &recognizer, &Recognizer::exec);
-    connect(o, &OEScreenshot::finished, [=]{
+    connect(o, &OEScreenshot::finished, [=](QPixmap _, QRect rect){
+        targetRect = rect;
+
         ui->titleBar->setText("(Running...)");
-        setVisible(true);
+        ui->pronBar->setText("");
+
+        while(!bars.empty()){
+            delete bars.back();
+            bars.pop_back();
+        }
+
+        setFixedHeight(108+20);
         update();
         timeList.append(clock());
     });
@@ -59,6 +68,20 @@ void Widget::onQueryFinished(const WordInfo& wi){
     extraStr += QString("\tSe: ") + QString::number(cost_1) + "ms";
 
     updateUi(wi);
+
+    setVisible(false);
+    update();
+    move(targetPoint());
+    setVisible(true);
+
+    /*
+        QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
+        animation->setDuration(250);
+        animation->setStartValue(pos());
+        animation->setEndValue(targetPoint());
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
+    */
 }
 
 void Widget::updateUi(const WordInfo &wi){
@@ -76,11 +99,6 @@ void Widget::updateUi(const WordInfo &wi){
         ui->pronBar->adjustSize();
     }
 
-    while(!bars.empty()){
-        delete bars.back();
-        bars.pop_back();
-    }
-
     int x = 20;
     int y = 108;
 
@@ -94,8 +112,6 @@ void Widget::updateUi(const WordInfo &wi){
     }
 
     setFixedHeight(y+20);
-
-    update();
 }
 
 

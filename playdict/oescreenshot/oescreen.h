@@ -20,6 +20,10 @@ public:
 
     ~OEScreen() { }
 
+    QRect currentRect(){
+        return currentRect_;
+    }
+
 protected:
     virtual void paintEvent(QPaintEvent *);
 

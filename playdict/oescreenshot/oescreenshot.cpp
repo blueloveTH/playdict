@@ -79,12 +79,13 @@ void OEScreenshot::mouseReleaseEvent(QMouseEvent *e) {
         isLeftPressed_ = false;
 
         QPixmap map = screenTool_->saveScreen();
+        QRect rect = screenTool_->currentRect();
 
         destroyScreen();
         close();
 
         e->accept();
-        emit finished(map);
+        emit finished(map, rect);
     }
 }
 

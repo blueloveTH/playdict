@@ -19,7 +19,7 @@ class OEScreenshot : public QWidget {
     Q_OBJECT
 
 signals:
-    void finished(QPixmap);
+    void finished(QPixmap, QRect);
 public:
     explicit OEScreenshot(QWidget *parent = 0);
     ~OEScreenshot(void);
