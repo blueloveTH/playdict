@@ -24,6 +24,8 @@ Widget::Widget(QWidget *parent) :
 
     connect(this, SIGNAL(initialized()), this, SLOT(RegisterShortcuts()));
     QtConcurrent::run([=]{Sleep(300);emit initialized();});
+
+    updateUi(WordInfo::helpWord());
 }
 
 bool Widget::screenShot()
@@ -61,11 +63,18 @@ void Widget::onQueryFinished(const WordInfo& wi){
 
 void Widget::updateUi(const WordInfo &wi){
     ui->titleBar->setText(wi.word);
+
+    int font_size = 10;
+    QString css = QString("font-size: %1pt");
+    ui->pronBar->setStyleSheet(css.arg(font_size));
     ui->pronBar->setText(wi.pronResult());
-    if(QTextDocument(wi.pronResult()).size().width() > ui->pronBar->width())
-        ui->pronBar->setStyleSheet("font-size: 9pt");
-    else
-        ui->pronBar->setStyleSheet("font-size: 10pt");
+    ui->pronBar->adjustSize();
+
+    while(ui->pronBar->width() > width()-20*2){
+        font_size--;
+        ui->pronBar->setStyleSheet(css.arg(font_size));
+        ui->pronBar->adjustSize();
+    }
 
     while(!bars.empty()){
         delete bars.back();

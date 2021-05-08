@@ -41,6 +41,18 @@ struct WordInfo{
             str += def.first + '\t' + def.second + '\n';
         return str.trimmed();
     }
+
+    static WordInfo helpWord(){
+        WordInfo wi("playdict");
+        wi.pronunciation = QStringList();
+        wi.pronunciation.append(QString(u8"√¿: ['pledkt]"));
+        wi.pronunciation.append(QString(u8"”¢: ['pledkt]"));
+        wi.definition.append(QPair<QString, QString>(QString("MM"), QString("Screenshot (Mid Mouse)")));
+        wi.definition.append(QPair<QString, QString>(QString("F1"), QString("Screenshot")));
+        wi.definition.append(QPair<QString, QString>(QString("F2"), QString("Hide/Show")));
+        wi.definition.append(QPair<QString, QString>(QString("F3"), QString("Quit")));
+        return wi;
+    }
 };
 
 #endif // WORDINFO_H

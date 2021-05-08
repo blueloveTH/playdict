@@ -48,11 +48,11 @@ public:
 
         /****************************/
 
-        defFirst->setText(" " + content.first);
-        defFirst->setFixedWidth(QTextDocument(" " + content.first).size().width());
+        defFirst->setText(" " + content.first + " ");
+        defFirst->adjustSize();
 
         defSecond->setText(content.second);
-        defSecond->document()->setDocumentMargin(1);
+        defSecond->document()->setDocumentMargin(0);
         defSecond->document()->setTextWidth(defSecond->width());
         defSecond->setFixedHeight(defSecond->document()->size().height());
     }

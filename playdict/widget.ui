@@ -104,7 +104,7 @@ color: rgb(207,207,207);</string>
     <enum>Qt::NoContextMenu</enum>
    </property>
    <property name="text">
-    <string>F1/鼠标中键 取词；F2 隐藏；F3 退出</string>
+    <string>1234567</string>
    </property>
    <property name="textInteractionFlags">
     <set>Qt::NoTextInteraction</set>
