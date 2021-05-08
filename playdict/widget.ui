@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>415</width>
-    <height>334</height>
+    <width>400</width>
+    <height>280</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,11 +28,20 @@
     <height>9999</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <family>微软雅黑</family>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
   <property name="cursor">
    <cursorShape>ArrowCursor</cursorShape>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
   <property name="windowTitle">
-   <string>Press F1</string>
+   <string>playdict</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -61,8 +70,14 @@ color: rgb(207,207,207);</string>
      <bold>true</bold>
     </font>
    </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::NoContextMenu</enum>
+   </property>
    <property name="text">
-    <string>output</string>
+    <string>playdict</string>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::NoTextInteraction</set>
    </property>
   </widget>
   <widget class="QLabel" name="pronBar">
@@ -85,8 +100,14 @@ color: rgb(207,207,207);</string>
    <property name="cursor">
     <cursorShape>ArrowCursor</cursorShape>
    </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::NoContextMenu</enum>
+   </property>
    <property name="text">
-    <string>[123]</string>
+    <string>F1/鼠标中键 取词；F2 隐藏；F3 退出</string>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::NoTextInteraction</set>
    </property>
   </widget>
  </widget>

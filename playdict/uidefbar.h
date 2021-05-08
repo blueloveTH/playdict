@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QTextBrowser>
 #include <QLabel>
+#include <QScrollBar>
+#include <QScrollArea>
 
 class UiDefinitionBar{
 
@@ -29,7 +31,7 @@ public:
 
         defSecond = new QTextBrowser(parent);
         defSecond->setEnabled(true);
-        defSecond->setGeometry(QRect(x+80, y, 299, 40));
+        defSecond->setGeometry(QRect(x+80, y, 280, 40));
         QFont font1;
         font1.setFamily(QString::fromUtf8("\345\276\256\350\275\257\351\233\205\351\273\221"));
         font1.setPointSize(10);
@@ -40,16 +42,19 @@ public:
         defSecond->setTabStopWidth(60);
         defSecond->setTextInteractionFlags(Qt::NoTextInteraction);
         defSecond->setOpenLinks(false);
+        defSecond->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        defSecond->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         defSecond->show();
 
         /****************************/
 
         defFirst->setText(" " + content.first);
-        defSecond->setText(content.second);
         defFirst->setFixedWidth(QTextDocument(" " + content.first).size().width());
 
+        defSecond->setText(content.second);
+        defSecond->document()->setDocumentMargin(1);
+        defSecond->document()->setTextWidth(defSecond->width());
         defSecond->setFixedHeight(defSecond->document()->size().height());
-        defSecond->document()->setDocumentMargin(2);
     }
 
     ~UiDefinitionBar(){

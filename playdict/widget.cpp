@@ -72,11 +72,11 @@ void Widget::updateUi(const WordInfo &wi){
     int y = 108;
 
     if(ui->pronBar->text().isEmpty())
-        y = ui->pronBar->pos().y();
+        y = ui->pronBar->pos().y() + 5;
 
     for(const auto &def : qAsConst(wi.definition)){
         auto bar = new UiDefinitionBar(this, x, y, def);
-        y += bar->height() + 6;
+        y += bar->height() + 10;
         bars.append(bar);
     }
 
