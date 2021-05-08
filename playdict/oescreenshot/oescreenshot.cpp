@@ -44,14 +44,7 @@ void OEScreenshot::initGlobalScreen(void) {
 }
 
 void OEScreenshot::createScreen(const QPoint &pos) {
-    QColor bkgColor = originPainting_->toImage().pixel(pos);
-    QColor borderColor;
-    if(bkgColor.lightnessF() > 0.5)
-        borderColor = QColor(30, 30, 30);
-    else
-        borderColor = QColor(207, 207, 207);
-
-    screenTool_.reset(new OEScreen(originPainting_, pos, borderColor, this));
+    screenTool_.reset(new OEScreen(originPainting_, pos, this));
 }
 
 void OEScreenshot::destroyScreen() {

@@ -59,8 +59,8 @@ private:
     QPoint targetPoint(){
         QRect rect = targetRect;
         auto desktopSize = QApplication::desktop()->size();
-        bool leftTag = rect.center().x()<desktopSize.width()/2;
-        bool upTag = rect.center().y()<desktopSize.height()/2;
+        bool leftTag = rect.bottomRight().x() < desktopSize.width()-width();
+        bool upTag = rect.bottomRight().y() < desktopSize.height()*0.92-height();
         if( leftTag &&  upTag) return rect.bottomRight();
         if( leftTag && !upTag) return rect.topRight()-QPoint(0,height());
         if(!leftTag &&  upTag) return rect.bottomLeft()-QPoint(width(),0);

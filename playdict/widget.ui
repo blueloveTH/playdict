@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>280</height>
+    <width>330</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -31,7 +31,10 @@
   <property name="font">
    <font>
     <family>微软雅黑</family>
-    <pointsize>10</pointsize>
+    <pointsize>9</pointsize>
+    <weight>50</weight>
+    <italic>false</italic>
+    <bold>false</bold>
    </font>
   </property>
   <property name="cursor">
@@ -48,7 +51,8 @@
   </property>
   <property name="styleSheet">
    <string notr="true">background: rgb(30, 30, 30);
-color: rgb(207,207,207);</string>
+color: rgb(207,207,207);
+font: 9pt &quot;微软雅黑&quot;;</string>
   </property>
   <property name="windowFilePath">
    <string notr="true"/>
@@ -56,22 +60,33 @@ color: rgb(207,207,207);</string>
   <widget class="QLabel" name="titleBar">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>15</x>
      <y>10</y>
-     <width>371</width>
-     <height>51</height>
+     <width>300</width>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="font">
     <font>
      <family>微软雅黑</family>
-     <pointsize>14</pointsize>
+     <pointsize>12</pointsize>
      <weight>75</weight>
+     <italic>false</italic>
      <bold>true</bold>
     </font>
    </property>
    <property name="contextMenuPolicy">
     <enum>Qt::NoContextMenu</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font-size: 12pt;
+font: bold;</string>
    </property>
    <property name="text">
     <string>playdict</string>
@@ -83,17 +98,18 @@ color: rgb(207,207,207);</string>
   <widget class="QLabel" name="pronBar">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>64</y>
-     <width>360</width>
+     <x>15</x>
+     <y>48</y>
+     <width>300</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>微软雅黑</family>
-     <pointsize>10</pointsize>
+     <pointsize>9</pointsize>
      <weight>50</weight>
+     <italic>false</italic>
      <bold>false</bold>
     </font>
    </property>

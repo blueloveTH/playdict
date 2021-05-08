@@ -68,7 +68,6 @@ void Widget::onQueryFinished(const WordInfo& wi){
     extraStr += QString("\tSe: ") + QString::number(cost_1) + "ms";
 
     updateUi(wi);
-
     move(targetPoint());
     update();
     setVisible(true);
@@ -86,23 +85,25 @@ void Widget::onQueryFinished(const WordInfo& wi){
 void Widget::updateUi(const WordInfo &wi){
     ui->titleBar->setText(wi.word);
 
-    int font_size = 10;
+    int font_size = font().pointSize();
     QString css = QString("font-size: %1pt");
     ui->pronBar->setStyleSheet(css.arg(font_size));
     ui->pronBar->setText(wi.pronResult());
     ui->pronBar->adjustSize();
 
-    while(ui->pronBar->width() > width()-20*2){
+    int x = 15;
+
+    while(ui->pronBar->width() > width()-x*2){
         font_size--;
         ui->pronBar->setStyleSheet(css.arg(font_size));
         ui->pronBar->adjustSize();
     }
 
-    int x = 20;
-    int y = 108;
+
+    int y = ui->pronBar->pos().y() + ui->pronBar->height() + 15;
 
     if(ui->pronBar->text().isEmpty())
-        y = ui->pronBar->pos().y() + 5;
+        y = ui->pronBar->pos().y() + 10;
 
     for(const auto &def : qAsConst(wi.definition)){
         auto bar = new UiDefinitionBar(this, x, y, def);
@@ -110,7 +111,7 @@ void Widget::updateUi(const WordInfo &wi){
         bars.append(bar);
     }
 
-    setFixedHeight(y+20);
+    setFixedHeight(y+5);
 }
 
 

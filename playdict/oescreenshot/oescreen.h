@@ -16,7 +16,7 @@ protected:
 
 public:
 
-    explicit OEScreen(std::shared_ptr<QPixmap>, QPoint, QColor, QWidget *parent = 0);
+    explicit OEScreen(std::shared_ptr<QPixmap>, QPoint, QWidget *parent = 0);
 
     ~OEScreen() { }
 
@@ -34,7 +34,15 @@ public slots:
 private:
     QPoint          originPoint_;
     std::shared_ptr<QPixmap> originPainting_;
+    QImage          originPaintingImage_;
     QRect           currentRect_;
-    QColor          borderColor;
+
+    float bkgLightness(){
+        QColor c0 = originPaintingImage_.pixelColor(currentRect_.topLeft());
+        QColor c1 = originPaintingImage_.pixelColor(currentRect_.topRight());
+        QColor c2 = originPaintingImage_.pixelColor(currentRect_.bottomLeft());
+        QColor c3 = originPaintingImage_.pixelColor(currentRect_.bottomRight());
+        return (c0.lightnessF()+c1.lightnessF()+c2.lightnessF()+c3.lightnessF()) / 4;
+    }
 };
 #endif // OESCREEN_H
