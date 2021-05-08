@@ -62,6 +62,10 @@ void Widget::onQueryFinished(const WordInfo& wi){
 void Widget::updateUi(const WordInfo &wi){
     ui->titleBar->setText(wi.word);
     ui->pronBar->setText(wi.pronResult());
+    if(QTextDocument(wi.pronResult()).size().width() > ui->pronBar->width())
+        ui->pronBar->setStyleSheet("font-size: 9pt");
+    else
+        ui->pronBar->setStyleSheet("font-size: 10pt");
 
     while(!bars.empty()){
         delete bars.back();
