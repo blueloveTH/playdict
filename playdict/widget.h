@@ -50,6 +50,7 @@ private:
     int renderPointX(){ return 15;}
     int renderPointY(){ return ui->pronBar->pos().y() + ui->pronBar->height() + 15; }
     int bottomMargin(){ return 5;}
+    int spacing(){ return 10;}
 
     ModelPipeline pipeline;
 
