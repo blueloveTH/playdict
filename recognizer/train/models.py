@@ -139,13 +139,17 @@ class EncoderDecoderModel(nn.Module):
                                     vocab_size=tokenizer.vocab_size,
                                     encoder_dim=CFG.encoder_dim,
                                     max_dec_len=CFG.max_dec_len)
+        self.deploy_mode = False
+        self.print_params()
+
+    def print_params(self):
         print('Encoder:', count_params(self.encoder))
         print('Decoder:', count_params(self.decoder))
 
-        self.deploy_mode = False;
-
     def deploy(self):
         self.deploy_mode = True
+        if hasattr(self.encoder, "switch_to_deplay_in_place"):
+            self.encoder.switch_to_deplay_in_place()
 
     def forward(self, src, tgt=None, tgt_lens=None):
         src = src.float() / 255

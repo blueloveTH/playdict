@@ -144,6 +144,11 @@ class RepVGG(nn.Module):
             self.in_planes = planes
         return nn.Sequential(*blocks)
 
+    def switch_to_deplay_in_place(self):
+        for module in self.modules():
+            if hasattr(module, 'switch_to_deploy'):
+                module.switch_to_deploy()
+
     def forward(self, x):
         x = self.stage0(x)
         x = self.stage1(x)
@@ -151,13 +156,3 @@ class RepVGG(nn.Module):
         x = self.stage3(x)
         x = self.stage4(x)
         return x
-
-def repvgg_model_convert(model:torch.nn.Module, save_path=None, do_copy=True):
-    if do_copy:
-        model = copy.deepcopy(model)
-    for module in model.modules():
-        if hasattr(module, 'switch_to_deploy'):
-            module.switch_to_deploy()
-    if save_path is not None:
-        torch.save(model.state_dict(), save_path)
-    return model
