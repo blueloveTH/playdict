@@ -16,7 +16,7 @@ QString Recognizer::model_predict(const QPixmap& map){
     for(uint i=0; i<inputSize; i++)
         x_test[i] = img.constBits()[i];
 
-    Ort::Value inputTensor = session->createTensor(x_test.data(), std::vector<int64_t>{1,1,32,128});
+    Ort::Value inputTensor = session->createTensor<uchar>(x_test.data(), std::vector<int64_t>{1,1,32,128});
 
     auto oList = session->run(&inputTensor, std::vector<const char*>{"sequence"});
 

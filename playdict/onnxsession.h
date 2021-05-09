@@ -2,7 +2,6 @@
 #define ONNXSESSION_H
 
 #include "onnxruntime_cxx_api.h"
-#include <QImage>
 
 class ONNXSession{
     Ort::Session *session;
@@ -21,11 +20,12 @@ public:
         return session->GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape();
     }
 
-    Ort::Value createTensor(uchar* data, const std::vector<int64_t>& shape){
+    template<typename T>
+    Ort::Value createTensor(T *data, const std::vector<int64_t>& shape){
         size_t size = 1;
         for(auto s : shape) size *= s;
         auto memoryInfo = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
-        return Ort::Value::CreateTensor<uchar>(memoryInfo, data, size, shape.data(), shape.size());
+        return Ort::Value::CreateTensor<T>(memoryInfo, data, size, shape.data(), shape.size());
     }
 
     auto run(Ort::Value *x, std::vector<const char*> outputNames){
