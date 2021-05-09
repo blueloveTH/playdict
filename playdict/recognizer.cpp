@@ -10,13 +10,12 @@ QString Recognizer::model_predict(const QPixmap& map){
     img.convertTo(QImage::Format_Grayscale8);
     img = img.scaled(128, 32);
 
-    size_t inputSize = 1 * 1 * 32 * 128;
-    std::vector<uchar> x_test(inputSize);
+    uchar* x_test = new uchar[32*128];
 
-    for(uint i=0; i<inputSize; i++)
+    for(uint i=0; i<32*128; i++)
         x_test[i] = img.constBits()[i];
 
-    Ort::Value inputTensor = session->createTensor<uchar>(x_test.data(), std::vector<int64_t>{1,1,32,128});
+    Ort::Value inputTensor = session->createTensor<uchar>(x_test, std::vector<int64_t>{1,1,32,128});
 
     auto oList = session->run(&inputTensor, std::vector<const char*>{"sequence"});
 
