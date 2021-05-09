@@ -2,14 +2,7 @@
 
 Recognizer::Recognizer(QObject *parent) : QObject(parent)
 {
-    Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "test");
-
-    Ort::SessionOptions session_options;
-    session_options.SetIntraOpNumThreads(1);
-    session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
-
-    const wchar_t* model_path = L"vgg_lstm_quantized.onnx";
-    session = new Ort::Session(env, model_path, session_options);
+    session = new ONNXSession("recognizer", L"models/vgg_lstm_quantized.onnx");
 }
 
 QString Recognizer::model_predict(const QPixmap& map){
@@ -17,31 +10,24 @@ QString Recognizer::model_predict(const QPixmap& map){
     img.convertTo(QImage::Format_Grayscale8);
     img = img.scaled(128, 32);
 
-    size_t input_size = 1 * 1 * 32 * 128;
-    std::vector<uchar> x_test(input_size);
+    size_t inputSize = 1 * 1 * 32 * 128;
+    std::vector<uchar> x_test(inputSize);
 
-    for(uint i=0; i<input_size; i++){
+    for(uint i=0; i<inputSize; i++)
         x_test[i] = img.constBits()[i];
-    }
 
-    auto input_dims = session->GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape();
+    Ort::Value inputTensor = session->createTensor(x_test.data(), std::vector<int64_t>{1,1,32,128});
 
-    auto memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
-    Ort::Value input_tensor = Ort::Value::CreateTensor<uchar>(memory_info, x_test.data(), input_size, input_dims.data(), 4);
+    auto oList = session->run(&inputTensor, std::vector<const char*>{"sequence"});
 
-    std::vector<const char*> input_node_names = {"x"};
-    std::vector<const char*> output_node_names = {"sequence"};
-
-    auto output_list = session->Run(Ort::RunOptions{nullptr}, input_node_names.data(), &input_tensor, 1, output_node_names.data(), 1);
-
-    int* seq = output_list.front().GetTensorMutableData<int>();
-    int element_cnt = output_list.front().GetTensorTypeAndShapeInfo().GetElementCount();
+    int* seq = oList.front().GetTensorMutableData<int>();
+    uint elementCnt = oList.front().GetTensorTypeAndShapeInfo().GetElementCount();
 
     QString mapping = "???0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -";
 
     QString word = "";
 
-    for(int i=0; i<element_cnt; i++){
+    for(uint i=0; i<elementCnt; i++){
         if(seq[i] < 2) continue;
         if(seq[i] == 2) break;
         word += mapping[seq[i]];

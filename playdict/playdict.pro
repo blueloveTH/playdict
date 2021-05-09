@@ -27,6 +27,7 @@ SOURCES += main.cpp\
 HEADERS  += \
     bingdict.h \
     detector.h \
+    onnxsession.h \
     recognizer.h \
     uidefbar.h \
     widget.h \
