@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
+    <width>350</width>
     <height>200</height>
    </rect>
   </property>
@@ -31,7 +31,7 @@
   <property name="font">
    <font>
     <family>微软雅黑</family>
-    <pointsize>9</pointsize>
+    <pointsize>-1</pointsize>
     <weight>50</weight>
     <italic>false</italic>
     <bold>false</bold>
@@ -52,7 +52,7 @@
   <property name="styleSheet">
    <string notr="true">background: rgb(30, 30, 30);
 color: rgb(207,207,207);
-font: 9pt &quot;微软雅黑&quot;;</string>
+font: 19px &quot;微软雅黑&quot;;</string>
   </property>
   <property name="windowFilePath">
    <string notr="true"/>
@@ -61,9 +61,9 @@ font: 9pt &quot;微软雅黑&quot;;</string>
    <property name="geometry">
     <rect>
      <x>15</x>
-     <y>10</y>
-     <width>300</width>
-     <height>31</height>
+     <y>5</y>
+     <width>320</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -75,7 +75,7 @@ font: 9pt &quot;微软雅黑&quot;;</string>
    <property name="font">
     <font>
      <family>微软雅黑</family>
-     <pointsize>12</pointsize>
+     <pointsize>-1</pointsize>
      <weight>75</weight>
      <italic>false</italic>
      <bold>true</bold>
@@ -85,11 +85,14 @@ font: 9pt &quot;微软雅黑&quot;;</string>
     <enum>Qt::NoContextMenu</enum>
    </property>
    <property name="styleSheet">
-    <string notr="true">font-size: 12pt;
+    <string notr="true">font-size: 26px;
 font: bold;</string>
    </property>
    <property name="text">
     <string>playdict</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
    <property name="textInteractionFlags">
     <set>Qt::NoTextInteraction</set>
@@ -99,15 +102,15 @@ font: bold;</string>
    <property name="geometry">
     <rect>
      <x>15</x>
-     <y>48</y>
-     <width>300</width>
+     <y>50</y>
+     <width>320</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>微软雅黑</family>
-     <pointsize>9</pointsize>
+     <pointsize>-1</pointsize>
      <weight>50</weight>
      <italic>false</italic>
      <bold>false</bold>
@@ -119,8 +122,11 @@ font: bold;</string>
    <property name="contextMenuPolicy">
     <enum>Qt::NoContextMenu</enum>
    </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <property name="text">
-    <string>1234567</string>
+    <string>[test]</string>
    </property>
    <property name="textInteractionFlags">
     <set>Qt::NoTextInteraction</set>

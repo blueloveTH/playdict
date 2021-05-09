@@ -18,7 +18,7 @@ struct WordInfo{
         this->word = word;
     }
 
-    bool hasResult(){
+    bool hasResult() const{
         return !definition.empty();
     }
 

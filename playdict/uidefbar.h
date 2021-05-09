@@ -24,7 +24,7 @@ public:
 
         defSecond = new QTextBrowser(parent);
         defSecond->setEnabled(true);
-        defSecond->setGeometry(QRect(x+65, y, 210, 40));
+        defSecond->setGeometry(QRect(x+65+3, y, 255-3, 40));
         defSecond->setStyleSheet(QString::fromUtf8("border: none;"));
         defSecond->setUndoRedoEnabled(false);
         defSecond->setReadOnly(true);
@@ -36,7 +36,9 @@ public:
 
         /****************************/
 
-        defFirst->setText(" " + content.first + " ");
+        QString c1 = content.first;
+        c1 = " " + c1.replace("modalv.", "m.v.") + " ";
+        defFirst->setText(c1);
         defFirst->adjustSize();
 
         defSecond->setText(content.second);

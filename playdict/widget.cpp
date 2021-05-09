@@ -85,10 +85,13 @@ void Widget::onQueryFinished(const WordInfo& wi){
 void Widget::updateUi(const WordInfo &wi){
     ui->titleBar->setText(wi.word);
 
-    int font_size = font().pointSize();
-    QString css = QString("font-size: %1pt");
+    int font_size = font().pixelSize();
+    QString css = QString("font-size: %1px;");
     ui->pronBar->setStyleSheet(css.arg(font_size));
-    ui->pronBar->setText(wi.pronResult());
+    if(wi.hasResult())
+        ui->pronBar->setText(wi.pronResult());
+    else
+        ui->pronBar->setText("(No result)");
     ui->pronBar->adjustSize();
 
     int x = 15;
