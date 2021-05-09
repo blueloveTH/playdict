@@ -30,7 +30,7 @@ public:
 
     auto run(Ort::Value *x, std::vector<const char*> outputNames){
         std::vector<const char*> input_node_names = {"x"};
-        return session->Run(Ort::RunOptions{nullptr}, input_node_names.data(), x, 1, outputNames.data(), 1);
+        return session->Run(Ort::RunOptions{nullptr}, input_node_names.data(), x, 1, outputNames.data(), outputNames.size());
     }
 };
 

@@ -14,25 +14,19 @@ TARGET = playdict
 TEMPLATE = app
 
 include(QHotkey-1.4.2/qhotkey.pri)
-include(oescreenshot/oescreenshot.pri)
 include(qhook/qhook.pri)
+include(oescreenshot/oescreenshot.pri)
 include(onnxruntime-1.7.0/onnxruntime.pri)
 
+include(bingdict/bingdict.pri)
+include(pipeline/pipeline.pri)
+
 SOURCES += main.cpp\
-    bingdict.cpp \
-    detector.cpp \
-    recognizer.cpp \
     widget.cpp
 
 HEADERS  += \
-    bingdict.h \
-    detector.h \
-    onnxsession.h \
-    recognizer.h \
     uidefbar.h \
     widget.h \
-    httplib.h \
-    wordinfo.h
 
 FORMS += \
     widget.ui

@@ -5,4 +5,4 @@ HEADERS += $$PUBLIC_HEADERS \
 SOURCES += $$PWD/oescreenshot.cpp \
     $$PWD/oescreen.cpp
 
-INCLUDEPATH += $$PWD/
+INCLUDEPATH += $$PWD

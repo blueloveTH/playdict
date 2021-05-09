@@ -5,37 +5,25 @@
 #include <QList>
 #include <QDomDocument>
 #include <QDomNode>
-#include <QtConcurrent/QtConcurrentRun>
 #include "httplib.h"
 #include "wordinfo.h"
 
-class BingDict : public QObject
+class BingDict
 {
-    Q_OBJECT
-
-    bool _isReady = true;
     QString current_query;
 
     QList<QStringList> findAll(const QString& pattern_str, const QString&, int);
     QList<int> findAllIndex(const QString& pattern_str, const QString&, int);
     QString subStringDiv(QString text, int startPos);
 
-    //PyObject *pyQueryFunc;
-
     httplib::Client *client;
 
-signals:
-    void finished(const WordInfo&);
+    WordInfo parse(QByteArray);
 
 public:
     BingDict();
     ~BingDict() {}
-    void query(QString q);
-
-    bool isReady(){ return _isReady; }
-
-private slots:
-    void onReply(QByteArray);
+    WordInfo query(QString q);
 };
 
 #endif // BINGDICT_H

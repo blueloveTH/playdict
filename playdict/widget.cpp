@@ -16,8 +16,8 @@ Widget::Widget(QWidget *parent) :
     HWND wid = (HWND)(this->winId());
         SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
 
-    connect(&bingDict, &BingDict::finished, this, &Widget::onQueryFinished);
-    connect(&recognizer, SIGNAL(finished(QString)), this, SLOT(onRecognizeFinished(QString)));
+    qRegisterMetaType<WordInfo>("WordInfo");
+    connect(&pipeline, &ModelPipeline::finished, this, &Widget::onPipelineFinished);
 
     trayIcon = new QSystemTrayIcon(QIcon(QPixmap(32, 32)), this);
     trayIcon->show();
@@ -30,9 +30,7 @@ Widget::Widget(QWidget *parent) :
 
 bool Widget::screenShot()
 {
-    if(!recognizer.isReady() || !bingDict.isReady())
-        return false;
-    timeList.clear();
+    if(!pipeline.isReady()) return false;
 
     if(OEScreenshot::hasInstance()){
         OEScreenshot::delInstance();
@@ -40,8 +38,7 @@ bool Widget::screenShot()
     }
 
     auto o = OEScreenshot::Instance();
-    connect(o, &OEScreenshot::finished, &recognizer, &Recognizer::exec);
-    connect(o, &OEScreenshot::finished, [=](QPixmap _, QRect rect){
+    connect(o, &OEScreenshot::finished, [=](QPixmap map, QRect rect){
         targetRect = rect;
 
         ui->titleBar->setText("(Running...)");
@@ -54,41 +51,14 @@ bool Widget::screenShot()
 
         setFixedHeight(renderPointY()+bottomMargin());
         update();
-        timeList.append(clock());
+
+        /********************************/
+        pipeline.run(map.toImage());
     });
     return true;
 }
 
-
-void Widget::onRecognizeFinished(QString word){
-    timeList.append(clock());
-    bingDict.query(word);
-}
-
-void Widget::onQueryFinished(const WordInfo& wi){
-    timeList.append(clock());
-    clock_t cost_0 = timeList[1] - timeList[0];
-    clock_t cost_1 = timeList[2] - timeList[1];
-    QString extraStr = "";
-    extraStr += QString("\nRe: ") + QString::number(cost_0) + "ms";
-    extraStr += QString("\tSe: ") + QString::number(cost_1) + "ms";
-
-    updateUi(wi);
-    move(targetPoint());
-    update();
-    setVisible(true);
-
-    /*
-        QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
-        animation->setDuration(250);
-        animation->setStartValue(pos());
-        animation->setEndValue(targetPoint());
-        animation->setEasingCurve(QEasingCurve::OutQuad);
-        animation->start(QAbstractAnimation::DeleteWhenStopped);
-    */
-}
-
-void Widget::updateUi(const WordInfo &wi){
+void Widget::updateUi(const WordInfo& wi){
     ui->titleBar->setText(wi.word);
 
     int font_size = font().pixelSize();
@@ -121,6 +91,51 @@ void Widget::updateUi(const WordInfo &wi){
     setFixedHeight(y+bottomMargin());
 }
 
+void Widget::onPipelineFinished(const WordInfo& wi){
+    updateUi(wi);
+    move(targetPoint());
+    update();
+    setVisible(true);
+
+    /*
+        QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
+        animation->setDuration(250);
+        animation->setStartValue(pos());
+        animation->setEndValue(targetPoint());
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
+    */
+}
+
+QPoint Widget::targetPoint(){
+    QRect rect = targetRect;
+
+    if(rect.width() < 2 || rect.height() < 2)
+        return pos();
+
+    auto desktopSize = QApplication::desktop()->size();
+    bool leftTag = rect.bottomRight().x() < desktopSize.width()-width();
+    bool upTag = rect.bottomRight().y() < desktopSize.height()*0.92-height();
+    if( leftTag &&  upTag) return rect.bottomRight();
+    if( leftTag && !upTag) return rect.topRight()-QPoint(0,height());
+    if(!leftTag &&  upTag) return rect.bottomLeft()-QPoint(width(),0);
+    if(!leftTag && !upTag) return rect.topLeft()-QPoint(width(),height());
+    return pos();
+}
+
+void Widget::RegisterShortcuts(){
+    hotkeys.append( new QHotkey(QKeySequence("F1"), true, this) );
+    hotkeys.append( new QHotkey(QKeySequence("F2"), true, this) );
+    hotkeys.append( new QHotkey(QKeySequence("F3"), true, this) );
+    connect(hotkeys[0], SIGNAL(activated()), this, SLOT(screenShot()));
+    connect(hotkeys[1], SIGNAL(activated()), this, SLOT(toggleVisible()));
+    connect(hotkeys[2], SIGNAL(activated()), this, SLOT(close()));
+
+    connect(QHook::Instance(), &QHook::mousePressed, [&](QHookMouseEvent *e){
+        if(e->button()==QHookMouseEvent::MiddleButton)
+            screenShot();
+    });
+}
 
 void Widget::closeEvent(QCloseEvent *e){
     for(int i=0; i<hotkeys.count(); i++)

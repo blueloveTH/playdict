@@ -1,8 +1,6 @@
 #include "bingdict.h"
 
 BingDict::BingDict(){
-    connect(this, &BingDict::finished, [&]{_isReady=true;});
-
     client = new httplib::Client("http://cn.bing.com");
     client->set_connection_timeout(3);
 
@@ -11,8 +9,6 @@ BingDict::BingDict(){
     //client->set_default_headers({
     //  { "Accept-Encoding", "gzip, deflate, br" }
     //});
-
-    qRegisterMetaType<WordInfo>("WordInfo");
 }
 
 QList<QStringList> BingDict::findAll(const QString& pattern_str, const QString& text, int offset=0){
@@ -78,7 +74,7 @@ QString BingDict::subStringDiv(QString text, int startPos){
     return "";
 }
 
-void BingDict::onReply(QByteArray bytes){
+WordInfo BingDict::parse(QByteArray bytes){
     QString html = QString(bytes);
 
     WordInfo wordinfo(current_query);
@@ -86,10 +82,7 @@ void BingDict::onReply(QByteArray bytes){
     /// clean
     QString cls_pattern = "<div class=\"client_def_container\">";
     int idx = html.indexOf(cls_pattern);
-    if (idx < 0){
-        emit finished(wordinfo);
-        return;
-    }
+    if (idx < 0) return wordinfo;
 
     /// pronunciation
     auto pron_matches = findAll("<div class=\"client_def_hd_pn\" lang=\"en\">.*</div>", html.left(idx));
@@ -128,19 +121,17 @@ void BingDict::onReply(QByteArray bytes){
         wordinfo.definition.append(QPair<QString, QString>(title, content));
     }
 
-    emit finished(wordinfo);
+    return wordinfo;
 }
 
-void BingDict::query(QString q){
-    _isReady = false;
+WordInfo BingDict::query(QString q){
     current_query = q = q.trimmed();
 
-    QtConcurrent::run([=]{
-        QString url = "/dict/clientsearch?mkt=zh-CN&setLang=zh&q=";
-        url += q;
-        std::string body;
-        bool isOk = false;
-        client->Get(url.toLatin1().data(),
+    QString url = "/dict/clientsearch?mkt=zh-CN&setLang=zh&q=";
+    url += q;
+    std::string body;
+    bool isOk = false;
+    client->Get(url.toLatin1().data(),
                                [&](const httplib::Response &res) {
                                  isOk = res.status == 200;
                                  return isOk;
@@ -149,12 +140,11 @@ void BingDict::query(QString q){
                                  body.append(data, data_length);
                                  return body.size() < 85000;
                                });
-        const char *result;
-        if(isOk)
-            result = body.data();
-        else
-            result = QString("(Connection error)").toLatin1().data();
-        onReply(QByteArray(result));
-    });
+    const char *result;
+    if(isOk)
+        result = body.data();
+    else
+        result = QString("(Connection error)").toLatin1().data();
+    return parse(QByteArray(result));
 }
 
