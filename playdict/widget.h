@@ -58,6 +58,10 @@ private:
 
     QPoint targetPoint(){
         QRect rect = targetRect;
+
+        if(rect.width() < 2 || rect.height() < 2)
+            return pos();
+
         auto desktopSize = QApplication::desktop()->size();
         bool leftTag = rect.bottomRight().x() < desktopSize.width()-width();
         bool upTag = rect.bottomRight().y() < desktopSize.height()*0.92-height();
@@ -65,7 +69,19 @@ private:
         if( leftTag && !upTag) return rect.topRight()-QPoint(0,height());
         if(!leftTag &&  upTag) return rect.bottomLeft()-QPoint(width(),0);
         if(!leftTag && !upTag) return rect.topLeft()-QPoint(width(),height());
-        return QPoint(0, 0);
+        return pos();
+    }
+
+    int renderPointX(){
+        return 15;
+    }
+
+    int renderPointY(){
+        return ui->pronBar->pos().y() + ui->pronBar->height() + 15;
+    }
+
+    int bottomMargin(){
+        return 5;
     }
 
 signals:

@@ -26,6 +26,15 @@ public:
 
     static OEScreenshot *Instance(void);
 
+    bool static hasInstance(){
+        return self_;
+    }
+
+    void static delInstance(){
+        delete self_;
+        self_ = nullptr;
+    }
+
 protected:
     virtual void mousePressEvent(QMouseEvent *);
     virtual void mouseReleaseEvent(QMouseEvent *e);

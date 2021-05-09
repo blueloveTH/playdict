@@ -25,7 +25,7 @@ OEScreenshot::~OEScreenshot(void) {
 }
 
 OEScreenshot *OEScreenshot::Instance(void) {
-    if (self_) delete self_;
+    if (hasInstance()) delInstance();
     self_ = new OEScreenshot;
     return self_;
 }
@@ -79,6 +79,7 @@ void OEScreenshot::mouseReleaseEvent(QMouseEvent *e) {
 
         e->accept();
         emit finished(map, rect);
+        delInstance();
     }
 }
 

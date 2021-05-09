@@ -33,6 +33,12 @@ bool Widget::screenShot()
     if(!recognizer.isReady() || !bingDict.isReady())
         return false;
     timeList.clear();
+
+    if(OEScreenshot::hasInstance()){
+        OEScreenshot::delInstance();
+        return false;
+    }
+
     auto o = OEScreenshot::Instance();
     connect(o, &OEScreenshot::finished, &recognizer, &Recognizer::exec);
     connect(o, &OEScreenshot::finished, [=](QPixmap _, QRect rect){
@@ -46,7 +52,7 @@ bool Widget::screenShot()
             bars.pop_back();
         }
 
-        setFixedHeight(108+20);
+        setFixedHeight(renderPointY()+bottomMargin());
         update();
         timeList.append(clock());
     });
@@ -94,16 +100,14 @@ void Widget::updateUi(const WordInfo &wi){
         ui->pronBar->setText("(No result)");
     ui->pronBar->adjustSize();
 
-    int x = 15;
-
+    int x = renderPointX();
     while(ui->pronBar->width() > width()-x*2){
         font_size--;
         ui->pronBar->setStyleSheet(css.arg(font_size));
         ui->pronBar->adjustSize();
     }
 
-
-    int y = ui->pronBar->pos().y() + ui->pronBar->height() + 15;
+    int y = renderPointY();
 
     if(ui->pronBar->text().isEmpty())
         y = ui->pronBar->pos().y() + 10;
@@ -114,7 +118,7 @@ void Widget::updateUi(const WordInfo &wi){
         bars.append(bar);
     }
 
-    setFixedHeight(y+5);
+    setFixedHeight(y+bottomMargin());
 }
 
 
