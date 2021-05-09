@@ -86,9 +86,9 @@ class CombinedOpt(torch.optim.Optimizer):
     def __init__(self, model):
         super().__init__(model.parameters(), {'lr': float('-inf')})
         self.encoder_opt = AdaBelief(
-            model.encoder.parameters(), lr=1e-4)
+            model.encoder.parameters(), lr=2e-3)
         self.decoder_opt = torch.optim.Adam(
-            model.decoder.parameters(), lr=4e-4)
+            model.decoder.parameters(), lr=1e-3)
 
     def step(self):
         self.encoder_opt.step()
