@@ -91,21 +91,20 @@ void Widget::updateUi(const WordInfo& wi){
 }
 
 void Widget::onPipelineFinished(const WordInfo& wi){
+    setVisible(false);
+
     updateUi(wi);
     update();
-    app->processEvents();
+    move(targetPoint());
 
-    if(isVisible()){
-        QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
-        animation->setDuration(1);
-        animation->setStartValue(pos());
-        animation->setEndValue(targetPoint());
-        animation->setEasingCurve(QEasingCurve::OutQuad);
-        animation->start(QAbstractAnimation::DeleteWhenStopped);
-    }else{
-        move(targetPoint());
-    }
     setVisible(true);
+
+    /*QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
+    animation->setDuration(1);
+    animation->setStartValue(pos());
+    animation->setEndValue(targetPoint());
+    animation->setEasingCurve(QEasingCurve::OutQuad);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);*/
 }
 
 QPoint Widget::targetPoint(){
