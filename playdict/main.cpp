@@ -10,12 +10,11 @@ int main(int argc, char *argv[])
         return 0;
     shared.create(8);
 
-    //QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
+    ScreenUtil::setAutoScalingFactor();
     QApplication a(argc, argv);
     a.setQuitOnLastWindowClosed(false);
 
-    Widget w;
+    Widget w(&a);
     w.show();
     return a.exec();
 }

@@ -5,8 +5,8 @@
 #include <QScreen>
 #include <QWidget>
 #include <QApplication>
-
-#include <windows.h>
+#include <QtDebug>
+#include "screenutil.h"
 
 class OEScreen : public QWidget {
     Q_OBJECT
@@ -24,6 +24,15 @@ public:
         return currentRect_;
     }
 
+    QRect scaledCurrentRect(){
+        QRect rect = currentRect();
+        float x = rect.x() * ScreenUtil::scalingFactor();
+        float y = rect.y() * ScreenUtil::scalingFactor();
+        float w = rect.width() * ScreenUtil::scalingFactor();
+        float h = rect.height() * ScreenUtil::scalingFactor();
+        return QRect(round(x), round(y), round(w), round(h));
+    }
+
 protected:
     virtual void paintEvent(QPaintEvent *);
 
@@ -38,10 +47,11 @@ private:
     QRect           currentRect_;
 
     float bkgLightness(){
-        QColor c0 = originPaintingImage_.pixelColor(currentRect_.topLeft());
-        QColor c1 = originPaintingImage_.pixelColor(currentRect_.topRight());
-        QColor c2 = originPaintingImage_.pixelColor(currentRect_.bottomLeft());
-        QColor c3 = originPaintingImage_.pixelColor(currentRect_.bottomRight());
+        QRect rect = scaledCurrentRect();
+        QColor c0 = originPaintingImage_.pixelColor(rect.topLeft());
+        QColor c1 = originPaintingImage_.pixelColor(rect.topRight());
+        QColor c2 = originPaintingImage_.pixelColor(rect.bottomLeft());
+        QColor c3 = originPaintingImage_.pixelColor(rect.bottomRight());
         return (c0.lightnessF()+c1.lightnessF()+c2.lightnessF()+c3.lightnessF()) / 4;
     }
 };

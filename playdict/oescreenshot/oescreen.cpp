@@ -13,7 +13,7 @@ void OEScreen::paintEvent(QPaintEvent *) {
     QPainter painter(this);
 
     painter.drawPixmap(QPoint(0,0),
-       *originPainting_, currentRect_);
+       *originPainting_, scaledCurrentRect());
 
     QColor color = bkgLightness() > 0.5 ? QColor(30, 30, 30) : QColor(207, 207, 207);
     QPen pen(color, 6);
@@ -23,7 +23,7 @@ void OEScreen::paintEvent(QPaintEvent *) {
 
 
 QPixmap OEScreen::saveScreen(void) {
-    return originPainting_->copy(currentRect_);
+    return originPainting_->copy(scaledCurrentRect());
 }
 
 void OEScreen::onMouseChange(int x, int y) {

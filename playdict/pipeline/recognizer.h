@@ -11,7 +11,7 @@ class Recognizer
 
 public:
     Recognizer(){
-        session = new ONNXSession("recognizer", L"models/vgg_lstm_quantized.onnx");
+        session = new ONNXSession("recognizer", ":/models/recognizer_model");
     }
 
     QString predict(QImage img){
@@ -19,7 +19,7 @@ public:
         img = img.scaled(128, 32);
 
         Ort::Value inputTensor = session->createTensor<uchar>(img.bits(), std::vector<int64_t>{1,1,32,128});
-        auto oList = session->run(&inputTensor, std::vector<const char*>{"sequence"});
+        auto oList = session->run(&inputTensor);
 
         int* seq = oList.front().GetTensorMutableData<int>();
         int elementCnt = (int)oList.front().GetTensorTypeAndShapeInfo().GetElementCount();

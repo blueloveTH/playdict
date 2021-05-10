@@ -1,11 +1,10 @@
 #include "widget.h"
 
-Widget::Widget(QWidget *parent) :
+Widget::Widget(QApplication* app, QWidget* parent) :
     QWidget(parent),
-    ui(new Ui::Widget)
+    ui(new Ui::Widget), app(app)
 {
     ui->setupUi(this);
-
     /// Set windows
     Qt::WindowFlags flags = windowFlags();
     flags |= Qt::WindowStaysOnTopHint;
@@ -93,18 +92,20 @@ void Widget::updateUi(const WordInfo& wi){
 
 void Widget::onPipelineFinished(const WordInfo& wi){
     updateUi(wi);
-    move(targetPoint());
     update();
-    setVisible(true);
+    app->processEvents();
 
-    /*
+    if(isVisible()){
         QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
-        animation->setDuration(250);
+        animation->setDuration(1);
         animation->setStartValue(pos());
         animation->setEndValue(targetPoint());
         animation->setEasingCurve(QEasingCurve::OutQuad);
         animation->start(QAbstractAnimation::DeleteWhenStopped);
-    */
+    }else{
+        move(targetPoint());
+    }
+    setVisible(true);
 }
 
 QPoint Widget::targetPoint(){
@@ -142,7 +143,7 @@ void Widget::closeEvent(QCloseEvent *e){
         hotkeys[i]->setRegistered(false);
     delete trayIcon;
     e->accept();
-    exit(0);
+    app->quit();
 }
 
 Widget::~Widget()

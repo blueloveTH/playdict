@@ -18,7 +18,7 @@ tokenizer = Tokenizer()
 class CFG:
     max_dec_len=25
     size=(128, 32)
-    epochs, batch_size = 6, 256
+    epochs, batch_size = 3, 256
     max_grad_norm=4
     embed_dim, attention_dim = 160, 192
     encoder_dim, decoder_dim = 192, 192
@@ -138,8 +138,8 @@ from keras4torch.callbacks import ModelCheckpoint
 
 torch.backends.cudnn.benchmark = True
 
-scheduler_1 = LRScheduler(MultiStepLR(opt.encoder_opt, [3, 5], 0.3))
-scheduler_2 = LRScheduler(MultiStepLR(opt.encoder_opt, [3, 5], 0.3))
+scheduler_1 = LRScheduler(MultiStepLR(opt.encoder_opt, [1, 2], 0.3))
+scheduler_2 = LRScheduler(MultiStepLR(opt.decoder_opt, [1, 2], 0.3))
 
 model.fit(train_set,
             validation_data=val_set,

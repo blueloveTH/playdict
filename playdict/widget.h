@@ -28,7 +28,7 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
-    explicit Widget(QWidget *parent = nullptr);
+    explicit Widget(QApplication* app, QWidget *parent = nullptr);
     ~Widget();
 
 protected:
@@ -41,6 +41,8 @@ private:
     QList<QHotkey*> hotkeys;
     QSystemTrayIcon *trayIcon;
     QList<UiDefinitionBar*> bars;
+    float scalingFactor;
+    QApplication *app;
 
     QPoint mouseStartPoint, windowTopLeftPoint;
     QRect targetRect;
