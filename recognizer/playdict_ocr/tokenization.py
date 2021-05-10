@@ -25,3 +25,22 @@ class Tokenizer:
         if len(end_idx) > 0:
             idx = idx[:end_idx[0]]
         return ''.join(map(self.i2w.__getitem__, idx))
+
+
+class TokenizerNAT:
+    def __init__(self):
+        characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -'
+        self.i2w = ['<PAD>'] + list(characters)
+        self.w2i = {self.i2w[i]: i for i in range(len(self.i2w))}
+
+    @property
+    def vocab_size(self):
+        return len(self.i2w)
+
+    def string_to_indices(self, s, dtype='uint8'):
+        indices = list(map(self.w2i.__getitem__, s))
+        return np.array(indices, dtype=dtype)
+
+    def indices_to_string(self, idx):
+        idx = idx[np.nonzero(idx)]     # remove <PAD>
+        return ''.join(map(self.i2w.__getitem__, idx))

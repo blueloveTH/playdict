@@ -23,26 +23,28 @@ class EncoderDecoderModel(nn.Module):
         if hasattr(self.encoder, "switch_to_deplay_in_place"):
             self.encoder.switch_to_deplay_in_place()
 
-    def forward(self, x):
-        x = x.float() / 255
-        x = (x - 0.449) / 0.226
+    def forward(self, src, tgt=None, tgt_lens=None):
+        src = src.float() / 255
+        src = (src - 0.449) / 0.226
 
         if(self.deploy_mode):
-            return self.predict_for_deploy(x)
+            return self.predict_for_deploy(src)
 
-        x = self.encoder(x)           # NCHW
+        memory = self.encoder(src)              # NCHW
 
-        x = x.permute(0, 3, 1, 2)     # NWCH
-        x = x.mean(dim=-1)            # NWC
+        memory = memory.permute(0, 3, 1, 2)     # NWCH
+        memory = memory.mean(dim=-1)            # NWC
 
-        return self.decoder(x)
+        if tgt is None:
+            return self.decoder.predict(memory)
+        return self.decoder(tgt, memory, tgt_lens=tgt_lens)
 
-    def predict_for_deploy(self, x):
-        x = self.encoder(x)              # NCHW
+    def predict_for_deploy(self, src):
+        memory = self.encoder(src)              # NCHW
 
-        x = x.permute(0, 3, 1, 2)     # NWCH
-        x = x.mean(dim=-1)            # NWC
+        memory = memory.permute(0, 3, 1, 2)     # NWCH
+        memory = memory.mean(dim=-1)            # NWC
 
-        logits = self.decoder(x)
+        logits = self.decoder.predict(memory)
         return logits.argmax(-1)
         
