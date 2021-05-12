@@ -1,3 +1,4 @@
+import torch
 import torch.nn.functional as F
 import torch.nn as nn
 
@@ -12,14 +13,15 @@ class EncoderDecoderModel(nn.Module):
         self.decoder = decoder
 
         self.deploy_mode = False
-        self.print_params()
+        self.deploy_return_conf = True
 
     def print_params(self):
         print('Encoder:', count_params(self.encoder))
         print('Decoder:', count_params(self.decoder))
 
-    def deploy(self):
+    def deploy(self, return_conf=True):
         self.deploy_mode = True
+        self.deploy_return_conf = return_conf
         if hasattr(self.encoder, "switch_to_deplay_in_place"):
             self.encoder.switch_to_deplay_in_place()
 
@@ -27,22 +29,19 @@ class EncoderDecoderModel(nn.Module):
         x = x.float() / 255
         x = (x - 0.449) / 0.226
 
-        if(self.deploy_mode):
-            return self.predict_for_deploy(x)
-
         x = self.encoder(x)           # NCHW
 
         x = x.permute(0, 3, 1, 2)     # NWCH
         x = x.mean(dim=-1)            # NWC
 
-        return self.decoder(x)
+        x = self.decoder(x)
 
-    def predict_for_deploy(self, x):
-        x = self.encoder(x)              # NCHW
+        if(self.deploy_mode):
+            x = x.softmax(-1)
+            y = x.argmax(-1)
+            if not self.deploy_return_conf:
+                return y
+            return y, x.gather(-1, y.unsqueeze(-1)).squeeze(-1)
+        return x
 
-        x = x.permute(0, 3, 1, 2)     # NWCH
-        x = x.mean(dim=-1)            # NWC
-
-        logits = self.decoder(x)
-        return logits.argmax(-1)
         

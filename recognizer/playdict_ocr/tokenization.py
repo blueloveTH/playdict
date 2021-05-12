@@ -30,7 +30,7 @@ class Tokenizer:
 class TokenizerNAT:
     def __init__(self):
         characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -'
-        self.i2w = ['<PAD>'] + list(characters)
+        self.i2w = ['<PAD>', '<PAD_1>', '<PAD_2>'] + list(characters)
         self.w2i = {self.i2w[i]: i for i in range(len(self.i2w))}
 
     @property
@@ -42,5 +42,16 @@ class TokenizerNAT:
         return np.array(indices, dtype=dtype)
 
     def indices_to_string(self, idx):
-        idx = idx[np.nonzero(idx)]     # remove <PAD>
+        idx = idx[idx>2]     # remove <PAD>
         return ''.join(map(self.i2w.__getitem__, idx))
+
+    def indices_to_string_ctc(self, idx):
+        """See reference: https://zhuanlan.zhihu.com/p/42719047"""
+        curr_i = -1
+        result = []
+        for i in idx:
+            if i != curr_i:
+                result.append(i)
+                curr_i = i
+
+        return self.indices_to_string(np.array(result))

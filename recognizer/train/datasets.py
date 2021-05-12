@@ -26,7 +26,7 @@ class TrainDataset(Dataset):
         img, tgt = self.raw_dataset[i]
         tgt = self.tokenizer.string_to_indices(tgt, dtype='int64')
         image = transform_grayscale_image(img, self.img_size)
-        return image, np.pad(tgt, (0, self.max_dec_len-len(tgt)))
+        return image, torch.tensor(len(tgt)), np.pad(tgt, (0, self.max_dec_len-len(tgt)))
 
 class PartitionedTrainDataset(TrainDataset):
     def __init__(self, file_list, cnt_list, max_dec_len, tokenizer, img_size):
@@ -58,12 +58,18 @@ class PartitionedTrainDataset(TrainDataset):
 
 
 class TestDataset(Dataset):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, raw_dataset, max_dec_len, tokenizer, img_size):
         super().__init__()
-        raise NotImplementedError()
-
+        self.raw_dataset = raw_dataset
+        self.img_size = img_size
+        self.tokenizer = tokenizer
+        self.max_dec_len = max_dec_len
+    
     def __len__(self):
-        raise NotImplementedError()
+        return len(self.raw_dataset)
     
     def __getitem__(self, i):
-        raise NotImplementedError()
+        img, tgt = self.raw_dataset[i]
+        tgt = self.tokenizer.string_to_indices(tgt, dtype='int64')
+        image = transform_grayscale_image(img, self.img_size)
+        return image

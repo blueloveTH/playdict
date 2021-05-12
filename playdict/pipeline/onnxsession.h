@@ -16,7 +16,8 @@ public:
 
         Ort::SessionOptions session_options;
         session_options.SetIntraOpNumThreads(1);
-        session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
+        //session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
+        session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_DISABLE_ALL);
 
         session = new Ort::Session(env, model_data.data(), model_data.size(), session_options);
     }

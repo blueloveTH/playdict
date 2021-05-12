@@ -8,10 +8,12 @@
 class Recognizer
 {
     ONNXSession *session;
+    QString model_path;
 
 public:
     Recognizer(){
-        session = new ONNXSession("recognizer", ":/models/recognizer_model");
+        model_path = ":/models/res/vgg_transformer_ctc_quantized.onnx";
+        session = new ONNXSession("recognizer", model_path);
     }
 
     QString predict(QImage img){
@@ -19,19 +21,45 @@ public:
         img = img.scaled(128, 32);
 
         Ort::Value inputTensor = session->createTensor<uchar>(img.bits(), std::vector<int64_t>{1,1,32,128});
-        auto oList = session->run(&inputTensor);
 
-        int* seq = oList.front().GetTensorMutableData<int>();
-        int elementCnt = (int)oList.front().GetTensorTypeAndShapeInfo().GetElementCount();
+        std::vector<const char*> outputNames = {"y", "confidence"};
+        auto oList = session->run(&inputTensor, outputNames);
 
-        QString mapping = "???0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -";
+        long long* _1 = oList[0].GetTensorMutableData<long long>();
+        int elementCnt = (int)oList[0].GetTensorTypeAndShapeInfo().GetElementCount();
+
+        float* conf = oList[1].GetTensorMutableData<float>();
+
+        QString mapping = "?!#0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -";
+
+        QList<int> results;
+        QString rawWord = "";
+        for(int i=0; i<elementCnt; i++){
+            rawWord += mapping[(int)_1[i]];
+            results.append((int)_1[i]);
+        }
+        qDebug() << rawWord;
 
         QString word = "";
 
-        for(int i=0; i<elementCnt; i++){
-            if(seq[i] < 2) continue;
-            if(seq[i] == 2) break;
-            word += mapping[seq[i]];
+        //ctc post processing
+        if(model_path.contains("ctc")){
+            int curr_i = -1;
+            QList<int> ctc_results;
+            for(int i : qAsConst(results)){
+                if(i != curr_i){
+                    ctc_results.append(i);
+                    curr_i = i;
+                }
+            }
+            results = ctc_results;
+        }
+
+        for(int i=0; i<results.size(); i++){
+            if(results[i] < 2) continue;
+            //if(results[i] == 2) break;
+            word += mapping[results[i]];
+            //qDebug() << mapping[results[i]] << conf[i];
         }
 
         return word;
