@@ -12,7 +12,7 @@ class Recognizer
 
 public:
     Recognizer(){
-        model_path = ":/models/res/vgg_transformer_ctc_quantized.onnx";
+        model_path = ":/models/res/vgg_lstm_quantized.onnx";
         session = new ONNXSession("recognizer", model_path);
     }
 
@@ -22,13 +22,13 @@ public:
 
         Ort::Value inputTensor = session->createTensor<uchar>(img.bits(), std::vector<int64_t>{1,1,32,128});
 
-        std::vector<const char*> outputNames = {"y", "confidence"};
+        std::vector<const char*> outputNames = {"y"};
         auto oList = session->run(&inputTensor, outputNames);
 
-        long long* _1 = oList[0].GetTensorMutableData<long long>();
+        qint64* _1 = oList[0].GetTensorMutableData<qint64>();
         int elementCnt = (int)oList[0].GetTensorTypeAndShapeInfo().GetElementCount();
 
-        float* conf = oList[1].GetTensorMutableData<float>();
+        //float* conf = oList[1].GetTensorMutableData<float>();
 
         QString mapping = "?!#0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -";
 
@@ -55,11 +55,17 @@ public:
             results = ctc_results;
         }
 
-        for(int i=0; i<results.size(); i++){
-            if(results[i] < 2) continue;
-            //if(results[i] == 2) break;
-            word += mapping[results[i]];
-            //qDebug() << mapping[results[i]] << conf[i];
+        if(model_path.contains("lstm")){
+            for(int i=0; i<results.size(); i++){
+                if(results[i] < 2) continue;
+                if(results[i] == 2) break;
+                word += mapping[results[i]];
+            }
+        }else{
+            for(int i=0; i<results.size(); i++){
+                if(results[i] <= 2) continue;
+                word += mapping[results[i]];
+            }
         }
 
         return word;

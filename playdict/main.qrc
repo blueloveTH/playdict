@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/models">
         <file>res/vgg_transformer_ctc_quantized.onnx</file>
+        <file>res/vgg_transformer_quantized.onnx</file>
+        <file>res/vgg_lstm_quantized.onnx</file>
     </qresource>
 </RCC>
