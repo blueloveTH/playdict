@@ -1,8 +1,9 @@
 import numpy as np
+from .word_generator import WordGenerator
 
 class Tokenizer:
     def __init__(self):
-        characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -'
+        characters = WordGenerator.get_all_characters()
         self.i2w = ['<PAD>', '<START>', '<END>'] + list(characters)
         self.w2i = {self.i2w[i]: i for i in range(len(self.i2w))}
 
@@ -29,7 +30,7 @@ class Tokenizer:
 
 class TokenizerNAT:
     def __init__(self):
-        characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -'
+        characters = WordGenerator.get_all_characters()
         self.i2w = ['<PAD>', '<PAD_1>', '<PAD_2>'] + list(characters)
         self.w2i = {self.i2w[i]: i for i in range(len(self.i2w))}
 

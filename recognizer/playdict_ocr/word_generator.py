@@ -1,16 +1,5 @@
 import numpy as np
 from random import choice, choices
-from text_renderer.corpus import Corpus
-import numba
-
-class GameOcrCorpus(Corpus):
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        self.wg = WordGenerator()
-
-    def get_text(self):
-        return self.wg.generate_word()
-
 
 choice_one = lambda x: [choice(x)]
 
@@ -18,13 +7,23 @@ class WordGenerator:
     def __init__(self, max_word_len=20) -> None:
         self.max_word_len = max_word_len
 
-    non_word_chars = ['#', '$', '%', '&', '+', '<', '=', '>', '?', '@', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '|']
+    non_word_chars = ['~', '#', '$', '%', '&', '+', '<', '=', '>', '?', '@', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '|']
     uppercase_word_chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     lowercase_word_chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     all_word_chars = uppercase_word_chars + lowercase_word_chars
     space_or_hyphen_chars = [' ', '-']
     last_only_chars = ['!', ',', '.', ':', ';', '?']
-    pair_only_chars = [('"', '"'), ("'", "'"), ('`', '`'), ('*', '*'), ('(', ')'), ('[', ']'), ('{', '}')]
+    pair_only_chars = [('"', '"'), ("'", "'"), ('*', '*'), ('(', ')'), ('[', ']'), ('{', '}')]
+
+
+    @staticmethod
+    def get_all_characters():
+        results = WordGenerator.non_word_chars + WordGenerator.all_word_chars + WordGenerator.space_or_hyphen_chars + WordGenerator.last_only_chars
+        for p1, p2 in WordGenerator.pair_only_chars:
+            results.append(p1)
+            results.append(p2)
+        results = {k:None for k in results}
+        return list(results.keys())
 
     @staticmethod
     def random_insert(src, target, margin):

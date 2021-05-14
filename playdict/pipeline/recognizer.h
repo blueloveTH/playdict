@@ -12,15 +12,15 @@ class Recognizer
 
 public:
     Recognizer(){
-        model_path = ":/models/res/vgg_lstm_quantized.onnx";
+        model_path = ":/models/res/vgg_transformer_ctc_synth_quantized.onnx";
         session = new ONNXSession("recognizer", model_path);
     }
 
     QString predict(QImage img){
         img.convertTo(QImage::Format_Grayscale8);
-        img = img.scaled(128, 32);
+        img = img.scaled(144, 32);
 
-        Ort::Value inputTensor = session->createTensor<uchar>(img.bits(), std::vector<int64_t>{1,1,32,128});
+        Ort::Value inputTensor = session->createTensor<uchar>(img.bits(), std::vector<int64_t>{1,1,32,144});
 
         std::vector<const char*> outputNames = {"y"};
         auto oList = session->run(&inputTensor, outputNames);
@@ -30,7 +30,7 @@ public:
 
         //float* conf = oList[1].GetTensorMutableData<float>();
 
-        QString mapping = "?!#0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -";
+        QString mapping = "000~#$%&+<=>?@0123456789|ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -!,.:;\"\'*()[]{}";
 
         QList<int> results;
         QString rawWord = "";

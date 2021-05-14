@@ -13,7 +13,6 @@ class EncoderDecoderModel(nn.Module):
         self.decoder = decoder
 
         self.deploy_mode = False
-        self.deploy_return_conf = True
 
     def print_params(self):
         print('Encoder:', count_params(self.encoder))
@@ -37,11 +36,8 @@ class EncoderDecoderModel(nn.Module):
         x = self.decoder(x)
 
         if(self.deploy_mode):
-            x = x.softmax(-1)
-            y = x.argmax(-1)
-            if not self.deploy_return_conf:
-                return y
-            return y, x.gather(-1, y.unsqueeze(-1)).squeeze(-1)
+            return x.argmax(-1)
+            #return y, x.gather(-1, y.unsqueeze(-1)).squeeze(-1)
         return x
 
         
