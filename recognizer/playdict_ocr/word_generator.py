@@ -81,4 +81,15 @@ class WordGenerator:
             if p2 < 0.1:
                 word = word[-final_length:]
         word = ''.join(word)
-        return word.strip(''.join(self.space_or_hyphen_chars))
+        word = word.strip(''.join(self.space_or_hyphen_chars))
+        '''
+        space_cnt = round(8 / (len(word) ** 0.5))
+        space_cnt = np.random.randint(0, space_cnt+1)
+        space_cnt = min(self.max_word_len - len(word), space_cnt)
+
+        if space_cnt > 0:
+            left_cnt = np.random.randint(0, space_cnt+1)
+            right_cnt = space_cnt - left_cnt
+            word = ' '*left_cnt + word + ' '*right_cnt
+        '''
+        return word
