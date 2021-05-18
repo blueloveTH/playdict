@@ -16,6 +16,7 @@ from text_renderer.utils.math_utils import PerspectiveTransform
 from text_renderer.utils.bbox import BBox
 from text_renderer.utils.font_text import FontText
 from text_renderer.utils.types import FontColor, is_list
+from text_renderer.bg_captcha import create_bg
 
 
 class Render:
@@ -45,7 +46,7 @@ class Render:
 
     @retry
     def __call__(self, *args, **kwargs) -> Tuple[np.ndarray, str]:
-        try:
+        #try:
             if self._should_apply_layout():
                 img, text = self.gen_multi_corpus()
             else:
@@ -60,15 +61,17 @@ class Render:
             np_img = np.array(img)
             np_img = cv2.cvtColor(np_img, cv2.COLOR_RGB2BGR)
             np_img = self.norm(np_img)
+            del img
+
             return np_img, text
-        except Exception as e:
-            logger.exception(e)
-            raise e
+        #except Exception as e:
+        #    logger.exception(e)
+        #    raise e
 
     def gen_single_corpus(self) -> Tuple[PILImage, str]:
         font_text = self.corpus.sample()
 
-        bg = self.bg_manager.get_bg()
+        bg = create_bg(400, 32)
         text_color = self.corpus.cfg.text_color_cfg.get_color(bg)
 
         text_mask = draw_text_on_bg(
@@ -188,9 +191,9 @@ class Render:
                 y_offset + transformed_text_mask.height,
             )
         )
-        
-        size = np.array(transformed_text_mask.size)
-        size = size * np.random.uniform(0.6, 1)
+
+        size_0, size_1 = np.array(transformed_text_mask.size)
+        size = np.array([size_0 * np.random.uniform(0.9, 1), size_1 * np.random.uniform(0.9, 1)])
         size = size.round().astype('int32')
 
         size_delta = np.array(transformed_text_mask.size) - size

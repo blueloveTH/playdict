@@ -11,6 +11,7 @@ class ModelPipeline : public QObject{
 
     Recognizer recognizer;
     BingDict bingDict;
+    QImage currImg_;
 
     bool _isReady = true;
 
@@ -22,7 +23,13 @@ public:
         return _isReady;
     }
 
+    QImage currImg(){
+        return currImg_;
+    }
+
     void run(QImage img){
+        currImg_ = img;
+
         QtConcurrent::run([=]{
             _isReady = false;
 

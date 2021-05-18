@@ -25,6 +25,15 @@ Widget::Widget(QApplication* app, QWidget* parent) :
     QtConcurrent::run([=]{Sleep(300);emit initialized();});
 
     updateUi(WordInfo::helpWord());
+
+    labelingMode = QDir("labeled_data/").exists();
+
+    if(labelingMode){
+        QString text = "Labeling Mode (cnt=%1)";
+        text = text.arg(QDir("labeled_data/").count());
+        ui->pronBar->setText(text);
+    }
+
 }
 
 bool Widget::screenShot()
@@ -98,6 +107,12 @@ void Widget::onPipelineFinished(const WordInfo& wi){
     move(targetPoint());
 
     setVisible(true);
+
+    if(labelingMode){
+        QString timestamp = QString::number(QDateTime::currentDateTime().toTime_t());
+        QString filename = QString("labeled_data/%1_%2.png").arg(wi.word).arg(timestamp);
+        pipeline.currImg().save(filename);
+    }
 
     /*QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
     animation->setDuration(1);

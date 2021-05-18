@@ -7,6 +7,8 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 #include <QJsonDocument>
+#include <QFileInfo>
+#include <QDir>
 
 #include <QHotkey>
 #include <QPropertyAnimation>
@@ -43,6 +45,7 @@ private:
     QList<UiDefinitionBar*> bars;
     float scalingFactor;
     QApplication *app;
+    bool labelingMode;
 
     QPoint mouseStartPoint, windowTopLeftPoint;
     QRect targetRect;

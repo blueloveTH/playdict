@@ -7,21 +7,17 @@ class WordGenerator:
     def __init__(self, max_word_len=20) -> None:
         self.max_word_len = max_word_len
 
-    non_word_chars = ['~', '#', '$', '%', '&', '+', '<', '=', '>', '?', '@', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '|']
+    non_word_chars = ['~', '$', '%', '&', '@', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*']
     uppercase_word_chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     lowercase_word_chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    all_word_chars = uppercase_word_chars + lowercase_word_chars
+    all_word_chars = uppercase_word_chars + lowercase_word_chars + non_word_chars
     space_or_hyphen_chars = [' ', '-']
-    last_only_chars = ['!', ',', '.', ':', ';', '?']
-    pair_only_chars = [('"', '"'), ("'", "'"), ('*', '*'), ('(', ')'), ('[', ']'), ('{', '}')]
+    edge_only_chars = ['(', '[', ')', ']', '"', '!', ',', '.', ':', ';', '?']
 
 
     @staticmethod
     def get_all_characters():
-        results = WordGenerator.non_word_chars + WordGenerator.all_word_chars + WordGenerator.space_or_hyphen_chars + WordGenerator.last_only_chars
-        for p1, p2 in WordGenerator.pair_only_chars:
-            results.append(p1)
-            results.append(p2)
+        results = WordGenerator.all_word_chars + WordGenerator.space_or_hyphen_chars + WordGenerator.edge_only_chars
         results = {k:None for k in results}
         return list(results.keys())
 
@@ -34,7 +30,7 @@ class WordGenerator:
     def generate_word(self):
         word_length = int(np.random.beta(3, 3) * (self.max_word_len-1) + 1)
 
-        proba = ['uppercase_only'] * 2 + ['lowercase_only'] * 4 + ['uppercase_first'] * 2 + ['random'] * 1
+        proba = ['uppercase_only'] * 2 + ['lowercase_only'] * 2 + ['uppercase_first'] + ['random']
         idx = np.random.randint(0, len(proba))
         if proba[idx] == 'uppercase_only':
             word = choices(self.uppercase_word_chars, k=word_length)
@@ -50,46 +46,16 @@ class WordGenerator:
             space_or_hyphen = choice_one(self.space_or_hyphen_chars)
             word = self.random_insert(word, space_or_hyphen, 2)
 
-        if np.random.uniform(0, 1) < 0.15:
-            non_word_count = np.random.randint(1, 4)
-            non_word_target = choices(self.non_word_chars, k=non_word_count)
-            word = self.random_insert(word, non_word_target, 0)
-
-        pair_proba, last_proba = np.random.uniform(0, 1, size=[2])
-        if pair_proba < 0.15:
-            p_first, p_second = choice_one(self.pair_only_chars)[0]
-            sub_length = np.random.randint(0, len(word)) + 1
-            min_idx = len(word) - sub_length
-            min_idx = np.random.randint(0, min_idx+1)
-            word[min_idx:min_idx] = [p_first]
-            min_idx = min_idx + sub_length + 1
-            word[min_idx:min_idx] = [p_second]
+        first_proba, last_proba = np.random.uniform(0, 1, size=[2])
 
         if last_proba < 0.15:
-            word += choice_one(self.last_only_chars)
+            word += choice_one(self.edge_only_chars)
+        if first_proba < 0.15:
+            word += choice_one(self.edge_only_chars)
         
         if len(word) > self.max_word_len:
             if np.random.uniform(0, 1) < 0.5:
                 word = word[:self.max_word_len]
             else:
                 word = word[-self.max_word_len:]
-        elif len(word) > 8:
-            final_length = len(word) - np.random.randint(1, 3)
-            p1, p2 = np.random.uniform(0, 1, size=[2])
-            if p1 < 0.1:
-                word = word[:final_length]
-            if p2 < 0.1:
-                word = word[-final_length:]
-        word = ''.join(word)
-        word = word.strip(''.join(self.space_or_hyphen_chars))
-        '''
-        space_cnt = round(8 / (len(word) ** 0.5))
-        space_cnt = np.random.randint(0, space_cnt+1)
-        space_cnt = min(self.max_word_len - len(word), space_cnt)
-
-        if space_cnt > 0:
-            left_cnt = np.random.randint(0, space_cnt+1)
-            right_cnt = space_cnt - left_cnt
-            word = ' '*left_cnt + word + ' '*right_cnt
-        '''
-        return word
+        return ''.join(word).strip(''.join(self.space_or_hyphen_chars))

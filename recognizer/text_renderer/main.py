@@ -53,14 +53,19 @@ render_cfg = RenderCfg(
     corpus=GameOcrCorpus(
         RandCorpusCfg(
             font_dir=pathlib.Path("font"),
-            font_size=(16, 30),
+            font_size=(64, 120),
         ),
     ),
     gray=True,
     #layout_effects=Padding(p=1, w_ratio=(0.0, 0.5), h_ratio=(0.0, 0.5), center=False),
 )
 
-render = Render(render_cfg)
+def new_renderer():
+    return Render(render_cfg)
+
+
+# %%
+render = new_renderer()
 
 
 # %%
@@ -72,11 +77,6 @@ def generate_img():
     # random flip
     if np.random.uniform(0, 1) > 0.5:
         img = 255 - img
-
-    h, w = img.shape
-    w_delta = w - target_width
-    if w_delta < 0:
-        img = np.pad(img, ((0,0), (-w_delta//2, -w_delta//2)), constant_values=0)
 
     img = cv2.resize(img, (target_width, 32))
 
@@ -96,25 +96,27 @@ show_img(*generate_img())
 
 
 # %%
-from tqdm import tqdm
+from tqdm import tqdm, trange
 import multiprocessing.dummy as mp
+import gc
 
 cnt = 2000000
 
-def loop_body(_):
+def loop_body(i):
     img, label = generate_img()
-    data.append(img)
-    tgt.append(label)
+    data[i] = img
+    tgt[i] = label
 
-for i in range(4):
-    data, tgt = [], []
+for i in range(3):
+    data, tgt = np.zeros([cnt, 32, 144], dtype='uint8'), [None] * cnt
 
     with mp.Pool(8) as p:
         with tqdm(total=cnt) as pbar:
             for _ in p.imap_unordered(loop_body, range(cnt)):
                 pbar.update()
 
-    RecognizationDataset(data, tgt).to_pickle(f'synth_{i}.pkl')
+    dataset = RecognizationDataset(data, tgt)
+    dataset.to_pickle(f'synth_{i}.pkl')
 
 
 # %%
