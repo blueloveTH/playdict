@@ -4,12 +4,15 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include "bingdict.h"
 #include "recognizer.h"
+#include "detector.h"
 
 class ModelPipeline : public QObject{
 
     Q_OBJECT
 
     Recognizer recognizer;
+    Detector detector;
+
     BingDict bingDict;
     QImage currImg_;
 
@@ -37,7 +40,17 @@ public:
 
             timeList.append(clock());
 
-            QString word = recognizer.predict(img);
+            uchar* bits = detector.crop(img);
+
+            if(bits == nullptr){
+                emit finished(WordInfo("(No word)"));
+                _isReady = true;
+                return;
+            }
+
+            timeList.append(clock());
+
+            QString word = recognizer.predict(bits);
 
             timeList.append(clock());
 
@@ -47,9 +60,10 @@ public:
 
             emit finished(wi);
 
-            clock_t cost_0 = timeList[1] - timeList[0];
-            clock_t cost_1 = timeList[2] - timeList[1];
-            qDebug() << QString("Re: %1ms, Se: %2ms").arg(cost_0).arg(cost_1);
+            clock_t cost_de = timeList[1] - timeList[0];
+            clock_t cost_re = timeList[2] - timeList[1];
+            clock_t cost_se = timeList[3] - timeList[2];
+            qDebug() << QString("De: %1ms, Re: %2ms, Se: %3ms").arg(cost_de).arg(cost_re).arg(cost_se);
 
             _isReady = true;
         });

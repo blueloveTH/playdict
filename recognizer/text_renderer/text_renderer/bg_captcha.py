@@ -10,12 +10,12 @@ def random_color(start=0, end=255):
     return (red, green, blue)
 
 def create_bg(width, height):
-    img = Image.new('RGBA', (width, height), random_color())
-    if random.random() < 0.3:
-        create_noise_dots(img, random_color(), number=random.randint(height//4, height))
-    if random.random() < 0.3:
-        for _ in range(random.randint(0, height//16)):
-            create_noise_line(img, random_color())
+    img = Image.new('RGBA', (width, height), random_color(0, 127))
+    #if random.random() < 0.3:
+    #    create_noise_dots(img, random_color(), number=random.randint(height//4, height))
+    #if random.random() < 0.3:
+    #    for _ in range(random.randint(0, height//16)):
+    #        create_noise_line(img, random_color())
     return img
 
 def create_noise_dots(image, color, number):

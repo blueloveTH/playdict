@@ -6,20 +6,23 @@
 
 class ONNXSession{
     Ort::Session *session;
+
 public:
-    ONNXSession(const char* name, QString qrcPath){
-        Ort::Env env(ORT_LOGGING_LEVEL_WARNING, name);
+    ONNXSession(QString qrcPath){
+        static Ort::Env *env;
+        if(env == nullptr)
+            env = new Ort::Env(ORT_LOGGING_LEVEL_WARNING, "global");
 
         QFile file(qrcPath);
         file.open(QIODevice::ReadOnly);
         QByteArray model_data = file.readAll();
 
         Ort::SessionOptions session_options;
-        session_options.SetIntraOpNumThreads(1);
+        //session_options.SetIntraOpNumThreads(1);
         //session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
-        session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_DISABLE_ALL);
+        //session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_DISABLE_ALL);
 
-        session = new Ort::Session(env, model_data.data(), model_data.size(), session_options);
+        session = new Ort::Session(*env, model_data.data(), model_data.size(), session_options);
     }
 
     std::vector<int64_t> inputShape(){

@@ -7,7 +7,7 @@ QT       += core gui
 QT       += xml
 QT       += widgets
 
-CONFIG   += C++11
+CONFIG   += C++17
 DESTDIR   = ../bin
 
 TARGET = playdict

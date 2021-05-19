@@ -192,6 +192,7 @@ class Render:
             )
         )
 
+        '''
         size_0, size_1 = np.array(transformed_text_mask.size)
         size = np.array([size_0 * np.random.uniform(0.9, 1), size_1 * np.random.uniform(0.9, 1)])
         size = size.round().astype('int32')
@@ -200,8 +201,8 @@ class Render:
         offset = np.random.randint(0, size_delta[0]+1), np.random.randint(0, size_delta[1]+1)
 
         transformed_text_mask = transformed_text_mask.resize(size)
-
-        bg.paste(transformed_text_mask, offset, mask=transformed_text_mask)
+        '''
+        bg.paste(transformed_text_mask, (0,0), mask=transformed_text_mask)
         return bg
 
     def get_text_color(self, bg: PILImage, text: str, font: FreeTypeFont) -> FontColor:

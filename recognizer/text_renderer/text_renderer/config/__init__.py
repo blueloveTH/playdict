@@ -98,6 +98,13 @@ class FixedTextColorCfg(TextColorCfg):
 
         return text_color
 
+import random
+
+def random_color(start=0, end=255):
+    red = random.randint(start, end)
+    green = random.randint(start, end)
+    blue = random.randint(start, end)
+    return (red, green, blue)
 
 @dataclass
 class SimpleTextColorCfg(TextColorCfg):
@@ -105,19 +112,10 @@ class SimpleTextColorCfg(TextColorCfg):
     Randomly use mean value of background image
     """
 
-    alpha: Tuple[int, int] = (110, 255)
-
     def get_color(self, bg_img: PILImage) -> Tuple[int, int, int, int]:
-        np_img = np.array(bg_img)
-        mean = np.mean(np_img)
-
-        alpha = np.random.randint(*self.alpha)
-        r = np.random.randint(0, int(mean * 0.7))
-        g = np.random.randint(0, int(mean * 0.7))
-        b = np.random.randint(0, int(mean * 0.7))
-        text_color = (r, g, b, alpha)
-
-        return text_color
+        #np_img = np.array(bg_img)
+        #mean = np.mean(np_img)
+        return random_color(128, 255)
 
 
 # noinspection PyUnresolvedReferences

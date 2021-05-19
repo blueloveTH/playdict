@@ -28,9 +28,9 @@ class WordGenerator:
         return src
 
     def generate_word(self):
-        word_length = int(np.random.beta(3, 3) * (self.max_word_len-1) + 1)
+        word_length = int(np.random.beta(3, 4.5) * (self.max_word_len-1) + 1)
 
-        proba = ['uppercase_only'] * 2 + ['lowercase_only'] * 2 + ['uppercase_first'] + ['random']
+        proba = ['uppercase_only'] + ['lowercase_only'] + ['uppercase_first'] + ['random']
         idx = np.random.randint(0, len(proba))
         if proba[idx] == 'uppercase_only':
             word = choices(self.uppercase_word_chars, k=word_length)
@@ -48,9 +48,9 @@ class WordGenerator:
 
         first_proba, last_proba = np.random.uniform(0, 1, size=[2])
 
-        if last_proba < 0.15:
+        if last_proba < 0.2:
             word += choice_one(self.edge_only_chars)
-        if first_proba < 0.15:
+        if first_proba < 0.2:
             word += choice_one(self.edge_only_chars)
         
         if len(word) > self.max_word_len:
