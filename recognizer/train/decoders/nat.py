@@ -28,7 +28,7 @@ class NATDecoder(nn.Module):
         self.transformer = nn.Sequential(
             TransformerEncoderLayer2(kdim=decoder_dim, vdim=decoder_dim, n_heads=8, dropout=0.0),
             TransformerEncoderLayer2(kdim=decoder_dim, vdim=decoder_dim, n_heads=8, dropout=0.0),
-            #TransformerEncoderLayer2(kdim=decoder_dim, vdim=decoder_dim, n_heads=8, dropout=0.0),
+            TransformerEncoderLayer2(kdim=decoder_dim, vdim=decoder_dim, n_heads=8, dropout=0.0),
             #TransformerEncoderLayer2(kdim=decoder_dim, vdim=decoder_dim, n_heads=8, dropout=0.0),
         )
 

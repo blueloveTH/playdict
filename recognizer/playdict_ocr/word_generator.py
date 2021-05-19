@@ -48,9 +48,9 @@ class WordGenerator:
 
         first_proba, last_proba = np.random.uniform(0, 1, size=[2])
 
-        if last_proba < 0.2:
+        if last_proba < 0.16:
             word += choice_one(self.edge_only_chars)
-        if first_proba < 0.2:
+        if first_proba < 0.16:
             word += choice_one(self.edge_only_chars)
         
         if len(word) > self.max_word_len:

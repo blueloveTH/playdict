@@ -53,7 +53,7 @@ render_cfg = RenderCfg(
     corpus=GameOcrCorpus(
         RandCorpusCfg(
             font_dir=pathlib.Path("font"),
-            font_size=(64, 120),
+            font_size=(32, 120),
         ),
     ),
     gray=True,
@@ -84,15 +84,23 @@ def generate_img():
 
 
 # %%
-def show_img(img, label=None):
+from PIL import Image
+
+def show_img(img, label=None, save=False):
     plt.imshow(img)
     plt.ylim(32, 0)
     if label is not None:
         plt.title(label)
 
+    if save:
+        img = Image.fromarray(img)
+        img.save('123.jpg')
+
 
 # %%
-show_img(*generate_img())
+img, label = generate_img()
+
+show_img(img, label, save=True)
 
 
 # %%

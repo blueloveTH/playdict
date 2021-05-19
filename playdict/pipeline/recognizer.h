@@ -24,7 +24,8 @@ public:
         qint64* _1 = oList[0].GetTensorMutableData<qint64>();
         int elementCnt = (int)oList[0].GetTensorTypeAndShapeInfo().GetElementCount();
 
-        QString mapping = "000ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~$%&@0123456789* -([)]\"!,.:;?";
+        //QString mapping = "___ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~$%&@0123456789* -([)]\"!,.:;?";
+        QString mapping = "___ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz $%  0123456789               ";
 
         QList<int> results;
         QString rawWord = "";
@@ -63,7 +64,7 @@ public:
             }
         }
 
-        return word;
+        return word.trimmed();
     }
 };
 
