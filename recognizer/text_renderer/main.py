@@ -115,7 +115,7 @@ def loop_body(i):
     data[i] = img
     tgt[i] = label
 
-for i in range(1,3):
+for i in range(2):
     data, tgt = np.zeros([cnt, 32, 144], dtype='uint8'), [None] * cnt
 
     with mp.Pool(8) as p:

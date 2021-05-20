@@ -22,6 +22,9 @@ include(bingdict/bingdict.pri)
 include(pipeline/pipeline.pri)
 include(edlib/edlib.pri)
 
+RC_ICONS = app.ico
+
+
 SOURCES += main.cpp\
     widget.cpp
 

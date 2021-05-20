@@ -18,7 +18,8 @@ Widget::Widget(QApplication* app, QWidget* parent) :
     qRegisterMetaType<WordInfo>("WordInfo");
     connect(&pipeline, &ModelPipeline::finished, this, &Widget::onPipelineFinished);
 
-    trayIcon = new QSystemTrayIcon(QIcon(QPixmap(32, 32)), this);
+    trayIcon = new QSystemTrayIcon(QIcon(QPixmap(":/ui/res/ico.png").scaled(32,32)), this);
+    connect(trayIcon, &QSystemTrayIcon::activated, [=]{setVisible(true);});
     trayIcon->show();
 
     connect(this, SIGNAL(initialized()), this, SLOT(RegisterShortcuts()));
@@ -135,6 +136,7 @@ void Widget::RegisterShortcuts(){
     connect(hotkeys[0], SIGNAL(activated()), this, SLOT(screenShot()));
     connect(hotkeys[1], SIGNAL(activated()), this, SLOT(toggleVisible()));
     connect(hotkeys[2], SIGNAL(activated()), this, SLOT(close()));
+    connect(ui->hideButton, SIGNAL(pressed()), this, SLOT(toggleVisible()));
 
     connect(QHook::Instance(), &QHook::mousePressed, [&](QHookMouseEvent *e){
         if(e->button()==QHookMouseEvent::MiddleButton)

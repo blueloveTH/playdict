@@ -6,4 +6,8 @@
     <qresource prefix="/others">
         <file>res/corrector_dict.txt</file>
     </qresource>
+    <qresource prefix="/ui">
+        <file>res/eye.png</file>
+        <file>res/ico.png</file>
+    </qresource>
 </RCC>

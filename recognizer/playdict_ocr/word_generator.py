@@ -1,5 +1,5 @@
 import numpy as np
-from random import choice, choices
+from random import choice, choices, random
 
 choice_one = lambda x: [choice(x)]
 
@@ -30,7 +30,7 @@ class WordGenerator:
     def generate_word(self):
         word_length = int(np.random.beta(3, 4.5) * (self.max_word_len-1) + 1)
 
-        proba = ['uppercase_only'] + ['lowercase_only'] + ['uppercase_first'] + ['random']
+        proba = ['uppercase_only'] + ['lowercase_only'] + ['uppercase_first']
         idx = np.random.randint(0, len(proba))
         if proba[idx] == 'uppercase_only':
             word = choices(self.uppercase_word_chars, k=word_length)
@@ -39,19 +39,25 @@ class WordGenerator:
         if proba[idx] == 'uppercase_first':
             first_char = choice_one(self.uppercase_word_chars)
             word = first_char + choices(self.lowercase_word_chars, k=word_length-1)
-        if proba[idx] == 'random':
-            word = choices(self.all_word_chars, k=word_length)
 
         if word_length >= 5 and np.random.uniform(0, 1) < 0.3:
             space_or_hyphen = choice_one(self.space_or_hyphen_chars)
             word = self.random_insert(word, space_or_hyphen, 2)
 
+        actv_proba, side_proba = np.random.uniform(0, 1, size=[2])
+        if actv_proba < 0.14:
+            cnt = np.random.randint(1, 5)
+            if side_proba < 0.5:
+                word = word + choices(self.non_word_chars, k=cnt)
+            else:
+                word = choices(self.non_word_chars, k=cnt) + word
+
         first_proba, last_proba = np.random.uniform(0, 1, size=[2])
 
-        if last_proba < 0.16:
-            word += choice_one(self.edge_only_chars)
-        if first_proba < 0.16:
-            word += choice_one(self.edge_only_chars)
+        if last_proba < 0.15:
+            word = word + choice_one(self.edge_only_chars)
+        if first_proba < 0.15:
+            word = choice_one(self.edge_only_chars) + word
         
         if len(word) > self.max_word_len:
             if np.random.uniform(0, 1) < 0.5:
