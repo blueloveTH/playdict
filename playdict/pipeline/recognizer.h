@@ -13,7 +13,7 @@ class Recognizer
 
 public:
     Recognizer(){
-        model_path = ":/models/res/vgg_lstm_quantized.onnx";
+        model_path = ":/models/res/vgg_transformer_quantized.onnx";
         session = new ONNXSession(model_path);
     }
 

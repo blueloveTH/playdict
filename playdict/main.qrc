@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/models">
-        <file>res/vgg_lstm_quantized.onnx</file>
         <file>res/pooling.onnx</file>
+        <file>res/vgg_transformer_quantized.onnx</file>
+    </qresource>
+    <qresource prefix="/others">
+        <file>res/corrector_dict.txt</file>
     </qresource>
 </RCC>

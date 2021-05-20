@@ -2,9 +2,13 @@
 #define MODELPIPELINE_H
 
 #include <QtConcurrent/QtConcurrentRun>
+#include <QDir>
+#include <QDateTime>
 #include "bingdict.h"
 #include "recognizer.h"
 #include "detector.h"
+#include "corrector.h"
+
 
 class ModelPipeline : public QObject{
 
@@ -12,26 +16,35 @@ class ModelPipeline : public QObject{
 
     Recognizer recognizer;
     Detector detector;
+    Corrector corrector;
 
     BingDict bingDict;
-    QImage currImg_;
 
     bool _isReady = true;
+    bool _labelingMode = false;
 
 signals:
     void finished(const WordInfo&);
 
 public:
+    ModelPipeline(){
+        _labelingMode = QDir("labeled_data/").exists();
+    }
+
+    bool labelingMode(){return this->_labelingMode;}
+
     bool isReady(){
         return _isReady;
     }
 
-    QImage currImg(){
-        return currImg_;
-    }
-
     void run(QImage img){
-        currImg_ = img;
+        QString timestamp = QString::number(QDateTime::currentDateTime().toTime_t());
+
+        if(labelingMode()){
+            auto rootDir = QDir("labeled_data");
+            rootDir.mkdir(timestamp);
+            img.save(QString("labeled_data/%1/original.png").arg(timestamp));
+        }
 
         QtConcurrent::run([=]{
             _isReady = false;
@@ -40,17 +53,31 @@ public:
 
             timeList.append(clock());
 
-            uchar* bits = detector.crop(img);
+            QImage cropped = detector.crop(img);
 
-            if(bits == nullptr){
+            if(cropped.isNull()){
                 emit finished(WordInfo("(No word)"));
                 _isReady = true;
                 return;
             }
 
+            if(labelingMode()){
+                cropped.save(QString("labeled_data/%1/cropped.png").arg(timestamp));
+            }
+
             timeList.append(clock());
 
-            QString word = recognizer.predict(bits);
+            QString word = recognizer.predict(cropped.bits());
+
+            if(labelingMode()){
+                QFile file(QString("labeled_data/%1/label.txt").arg(timestamp));
+                file.open(QIODevice::WriteOnly);
+                file.write(word.toLatin1());
+                file.close();
+            }
+
+            if(word.size() >= 8)
+                word = corrector.correct(word);
 
             timeList.append(clock());
 

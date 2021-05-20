@@ -45,7 +45,6 @@ private:
     QList<UiDefinitionBar*> bars;
     float scalingFactor;
     QApplication *app;
-    bool labelingMode;
 
     QPoint mouseStartPoint, windowTopLeftPoint;
     QRect targetRect;

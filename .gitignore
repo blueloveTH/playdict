@@ -15,6 +15,7 @@ mjsynth*
 __pycache__
 saved_model
 preprocessed
+bin/labeled_data
 
 
 # Qt-es

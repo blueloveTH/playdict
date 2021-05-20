@@ -14,7 +14,7 @@ public:
         session = new ONNXSession(":/models/res/pooling.onnx");
     }
 
-    uchar* crop(QImage img){
+    QImage crop(QImage img){
         img.convertTo(QImage::Format_Grayscale8);
         img = img.scaled(144*2, 32*2);
 
@@ -24,7 +24,7 @@ public:
         const int* output = oList[0].GetTensorMutableData<int>();
         Rect rect = getMainBox(MatArray(output, 32*2, 144*2));
 
-        if(rect.isEmpty()) return nullptr;
+        if(rect.isEmpty()) return QImage();
 
         /*QImage img_2(img);
         for(int i=0; i<32*2; i++){
@@ -36,8 +36,7 @@ public:
         img_2.save("123.png");*/
 
         img = img.copy(rect.yMin, rect.xMin, rect.ySpan(), rect.xSpan()).scaled(144, 32);
-        //img.save("345.png");
-        return img.bits();
+        return img;
     }
 
 };

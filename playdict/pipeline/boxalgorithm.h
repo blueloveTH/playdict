@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QtDebug>
 #include <QImage>
+#include <algorithm>
 
 struct MatArray{
     const int* mat;
@@ -95,7 +96,8 @@ struct Rect{
     }
 
     float distance(float x, float y) const{
-        return sqrt(QPointF::dotProduct(center(), QPointF(x, y)));
+        QPointF diff = center() - QPointF(x, y);
+        return sqrt(QPointF::dotProduct(diff, diff));
     }
 
     QPointF center() const{
@@ -110,6 +112,10 @@ struct Rect{
 
     float xSpan() const{
         return xMax - xMin + 1;
+    }
+
+    float area() const{
+        return xSpan() * ySpan();
     }
 
     Rect united(const Rect& other){
@@ -143,18 +149,55 @@ inline QList<Rect> getAnchorBox01(const MatArray& mat){
             maxX = fmax(x_, maxX);
             maxY = fmax(y_, maxY);
         }
-        results.append(Rect(minX, minY, maxX, maxY));
+        auto rect = Rect(minX, minY, maxX, maxY);
+        if(rect.area() > 16*16)
+            results.append(rect);
     }
     return results;
 }
 
+
+struct RegionInfo{
+    int index;
+    float distance;
+
+    RegionInfo(int index, float distance){
+        this->index = index;
+        this->distance = distance;
+    }
+};
+
 inline Rect selectMainBox(QList<Rect> results, int x, int y){
+    QList<RegionInfo> infoList;
     for(int i=0; i<results.size(); i++){
-        if(results.at(i).contains(x, y)){
-            return results.at(i);
+        float dis = results.at(i).distance(x, y);
+        infoList.append(RegionInfo(i, dis));
+    }
+
+    if(infoList.empty()) return Rect();
+
+    std::sort(infoList.begin(), infoList.end(),
+              [=](const RegionInfo& lhs, const RegionInfo rhs){return lhs.distance<rhs.distance;});
+
+    Rect rect = results[infoList[0].index];
+
+    /*
+    for(auto i: infoList){
+        qDebug() << results[i.index].repr();
+        qDebug() << i.index << i.distance;
+    }*/
+
+    if(results.size() > 1){
+        Rect secondRect = results[infoList[1].index];
+        bool _1 = rect.center().x() - secondRect.center().x() < rect.xSpan() * 0.25;
+        bool _2 = (infoList[0].distance - infoList[1].distance) <= infoList[0].distance * 0.25;
+        if(_1 && _2){
+            //qDebug() << "united.";
+            rect = rect.united(secondRect);
         }
     }
-    return Rect();
+
+    return rect;
 }
 
 inline Rect getMainBox(const MatArray& mat){

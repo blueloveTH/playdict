@@ -16,6 +16,7 @@ public:
         QFile file(qrcPath);
         file.open(QIODevice::ReadOnly);
         QByteArray model_data = file.readAll();
+        file.close();
 
         Ort::SessionOptions session_options;
         //session_options.SetIntraOpNumThreads(1);

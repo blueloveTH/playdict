@@ -20,6 +20,7 @@ include(onnxruntime-1.7.0/onnxruntime.pri)
 
 include(bingdict/bingdict.pri)
 include(pipeline/pipeline.pri)
+include(edlib/edlib.pri)
 
 SOURCES += main.cpp\
     widget.cpp
