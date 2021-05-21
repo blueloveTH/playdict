@@ -181,20 +181,29 @@ inline Rect selectMainBox(QList<Rect> results, int x, int y){
 
     Rect rect = results[infoList[0].index];
 
-    /*
-    for(auto i: infoList){
+
+    /*for(auto i: infoList){
         qDebug() << results[i.index].repr();
         qDebug() << i.index << i.distance;
     }*/
 
     if(results.size() > 1){
-        Rect secondRect = results[infoList[1].index];
-        bool _1 = rect.center().x() - secondRect.center().x() < rect.xSpan() * 0.25;
+        for(int i=1; i<results.size(); i++){
+            Rect pendingRect = results[infoList[i].index];
+            bool _1 = fabs(rect.center().x() - pendingRect.center().x()) < rect.xSpan()*0.25;
+            bool _2 = rect.xSpan()*0.75 < pendingRect.xSpan() && pendingRect.xSpan() < rect.xSpan()*1.25;
+            bool _3 = pendingRect.yMin == 0 || pendingRect.yMax == 288-1;
+            if(i > 1 && _3) continue;
+            if(_1 && _2) rect = rect.united(pendingRect);
+        }
+
+        /*Rect secondRect = results[infoList[1].index];
+        bool _1 = fabs(rect.center().x() - secondRect.center().x()) < rect.xSpan() * 0.25;
         bool _2 = (infoList[0].distance - infoList[1].distance) <= infoList[0].distance * 0.25;
         if(_1 && _2){
             //qDebug() << "united.";
             rect = rect.united(secondRect);
-        }
+        }*/
     }
 
     return rect;

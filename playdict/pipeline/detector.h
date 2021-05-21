@@ -26,14 +26,14 @@ public:
 
         if(rect.isEmpty()) return QImage();
 
-        QImage img_2(img);
+        /*QImage img_2(img);
         for(int i=0; i<32*2; i++){
             for(int j=0; j<144*2; j++){
                 uint v = output[i*144*2+j] * 255;
                 img_2.setPixel(j, i, qRgb(v,v,v));
             }
         }
-        img_2.save("123.png");
+        img_2.save("123.png");*/
 
         img = img.copy(rect.yMin, rect.xMin, rect.ySpan(), rect.xSpan()).scaled(144, 32);
         return img;

@@ -40,12 +40,12 @@ class WordGenerator:
             first_char = choice_one(self.uppercase_word_chars)
             word = first_char + choices(self.lowercase_word_chars, k=word_length-1)
 
-        if word_length >= 5 and np.random.uniform(0, 1) < 0.3:
+        if word_length >= 5 and np.random.uniform(0, 1) < 0.2:
             space_or_hyphen = choice_one(self.space_or_hyphen_chars)
             word = self.random_insert(word, space_or_hyphen, 2)
 
         actv_proba, side_proba = np.random.uniform(0, 1, size=[2])
-        if actv_proba < 0.14:
+        if actv_proba < 0.08:
             cnt = np.random.randint(1, 5)
             if side_proba < 0.5:
                 word = word + choices(self.non_word_chars, k=cnt)
@@ -54,9 +54,9 @@ class WordGenerator:
 
         first_proba, last_proba = np.random.uniform(0, 1, size=[2])
 
-        if last_proba < 0.15:
+        if last_proba < 0.06:
             word = word + choice_one(self.edge_only_chars)
-        if first_proba < 0.15:
+        if first_proba < 0.10:
             word = choice_one(self.edge_only_chars) + word
         
         if len(word) > self.max_word_len:

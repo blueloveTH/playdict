@@ -5,27 +5,21 @@ Widget::Widget(QApplication* app, QWidget* parent) :
     ui(new Ui::Widget), app(app)
 {
     ui->setupUi(this);
-    /// Set windows
-    Qt::WindowFlags flags = windowFlags();
-    flags |= Qt::WindowStaysOnTopHint;
-    flags |= Qt::FramelessWindowHint;
-    setWindowFlags(flags);
 
-    /// No focus
-    HWND wid = (HWND)(this->winId());
-        SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
+    ScreenUtil::setWindowFlags(this);
 
     qRegisterMetaType<WordInfo>("WordInfo");
     connect(&pipeline, &ModelPipeline::finished, this, &Widget::onPipelineFinished);
 
+    /// Tray icon
     trayIcon = new QSystemTrayIcon(QIcon(QPixmap(":/ui/res/ico.png").scaled(32,32)), this);
     QMenu *trayMenu = new QMenu(this);
-    trayMenu->addAction("Show", [=]{setVisible(true);});
     trayMenu->addAction("Exit", [=]{app->exit();});
     trayIcon->setContextMenu(trayMenu);
-    //connect(trayIcon, &QSystemTrayIcon::activated, [=]{setVisible(true);});
+    connect(trayIcon, &QSystemTrayIcon::activated, [=]{setVisible(true);});
     trayIcon->show();
 
+    /// Shortcuts
     connect(this, SIGNAL(initialized()), this, SLOT(RegisterShortcuts()));
     QtConcurrent::run([=]{Sleep(300);emit initialized();});
 
@@ -36,6 +30,13 @@ Widget::Widget(QApplication* app, QWidget* parent) :
         ui->pronBar->setText(text);
         ui->pronBar->adjustSize();
     }
+
+    /*QString css = styleSheet();
+    auto re_1 = QRegExp("background:.*;"); re_1.setMinimal(true);
+    auto re_2 = QRegExp("color:.*;"); re_1.setMinimal(true);
+    css = css.replace(re_1, "background: rgb(255,255,255);");
+    css = css.replace(re_2, "color: rgb(0,0,0);");
+    setStyleSheet(css);*/
 }
 
 bool Widget::screenShot()

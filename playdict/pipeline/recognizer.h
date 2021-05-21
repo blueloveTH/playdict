@@ -25,7 +25,7 @@ public:
         int elementCnt = (int)oList[0].GetTensorTypeAndShapeInfo().GetElementCount();
 
         //QString mapping = "___ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~$%&@0123456789* -([)]\"!,.:;?";
-        QString mapping = "___ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz $%  0123456789               ";
+        QString mapping = "___ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz $%  0123456789  -            ";
 
         QList<int> results;
         QString rawWord = "";

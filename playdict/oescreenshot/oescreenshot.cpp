@@ -9,13 +9,7 @@ OEScreenshot::OEScreenshot(QWidget *parent) : QWidget(parent){
     initGlobalScreen();
     setGeometry(desktopRect);
 
-    Qt::WindowFlags flags = windowFlags();
-    flags |= Qt::WindowStaysOnTopHint;
-    flags |= Qt::FramelessWindowHint;
-    setWindowFlags(flags);
-
-    HWND wid = (HWND)(this->winId());
-        SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
+    ScreenUtil::setWindowFlags(this);
 
     setMouseTracking(true);
     show();

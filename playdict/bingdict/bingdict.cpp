@@ -127,6 +127,9 @@ WordInfo BingDict::parse(QByteArray bytes){
 WordInfo BingDict::query(QString q){
     current_query = q = q.trimmed();
 
+    if(current_query.toLower() == "playdict")
+        return WordInfo::playdict();
+
     QString url = "/dict/clientsearch?mkt=zh-CN&setLang=zh&q=";
     url += q;
     std::string body;

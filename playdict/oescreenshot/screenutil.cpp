@@ -38,3 +38,16 @@ void ScreenUtil::setAutoScalingFactor(float a){
     qputenv("QT_SCALE_FACTOR_ROUNDING_POLICY", "1");
     qputenv("QT_SCALE_FACTOR", QString::number(scalingFactor_).toLatin1());
 }
+
+void ScreenUtil::setWindowFlags(QWidget *widget){
+    /// Set windows
+    Qt::WindowFlags flags = widget->windowFlags();
+    flags |= Qt::WindowStaysOnTopHint;
+    flags |= Qt::FramelessWindowHint;
+    flags |= Qt::BypassWindowManagerHint;
+    widget->setWindowFlags(flags);
+
+    /// No focus
+    HWND wid = (HWND)(widget->winId());
+        SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
+}

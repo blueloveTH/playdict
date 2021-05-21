@@ -3,8 +3,7 @@
 OEScreen::OEScreen(std::shared_ptr<QPixmap> originPainting, QPoint pos, QWidget *parent)
     : QWidget(parent), originPoint_(pos), originPainting_(originPainting){
 
-    HWND wid = (HWND)(this->winId());
-        SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
+    ScreenUtil::setWindowFlags(this);
 
     originPaintingImage_ = originPainting_->toImage();
 }

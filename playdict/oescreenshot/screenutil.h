@@ -6,6 +6,7 @@
 #include <windows.h>
 
 #include <QString>
+#include <QWidget>
 
 class ScreenUtil
 {
@@ -16,6 +17,7 @@ public:
 
     float static scalingFactor();
     void static setAutoScalingFactor(float a=1.0);
+    void static setWindowFlags(QWidget* widget);
 };
 
 #endif // SCREENUTIL_H

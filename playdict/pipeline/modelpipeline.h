@@ -49,9 +49,7 @@ public:
         QtConcurrent::run([=]{
             _isReady = false;
 
-            QList<clock_t> timeList;
-
-            timeList.append(clock());
+            clock_t startTime = clock();
 
             QImage cropped = detector.crop(img);
 
@@ -65,7 +63,8 @@ public:
                 cropped.save(QString("labeled_data/%1/cropped.png").arg(timestamp));
             }
 
-            timeList.append(clock());
+            clock_t cost_de = clock() - startTime;
+            startTime = clock();
 
             QString word = recognizer.predict(cropped.bits());
 
@@ -76,21 +75,23 @@ public:
                 file.close();
             }
 
-            if(word.size() >= 8)
+            clock_t cost_re = clock() - startTime;
+            startTime = clock();
+
+            if(word.size() >= 9)
                 word = corrector.correct(word);
 
-            timeList.append(clock());
+            clock_t cost_ce = clock() - startTime;
+            startTime = clock();
 
             WordInfo wi = bingDict.query(word);
 
-            timeList.append(clock());
+            clock_t cost_se = clock() - startTime;
+            startTime = clock();
 
             emit finished(wi);
 
-            clock_t cost_de = timeList[1] - timeList[0];
-            clock_t cost_re = timeList[2] - timeList[1];
-            clock_t cost_se = timeList[3] - timeList[2];
-            qDebug() << QString("De: %1ms, Re: %2ms, Se: %3ms").arg(cost_de).arg(cost_re).arg(cost_se);
+            qDebug() << QString("De: %1ms, Re: %2ms, Ce: %3ms, Se: %4ms").arg(cost_de).arg(cost_re).arg(cost_ce).arg(cost_se);
 
             _isReady = true;
         });
