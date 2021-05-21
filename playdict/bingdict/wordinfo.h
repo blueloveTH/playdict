@@ -45,12 +45,13 @@ struct WordInfo{
     static WordInfo helpWord(){
         WordInfo wi("playdict");
         wi.pronunciation = QStringList();
-        wi.pronunciation.append(QString(u8"\u7f8e") + ": ['pleɪˌdɪkt]");
-        wi.pronunciation.append(QString(u8"\u82f1") + ": ['pleɪˌdɪkt]");
+        wi.pronunciation.append("(Update: May 21, 2021)");
+        //wi.pronunciation.append(QString(u8"\u7f8e") + ": ['pleɪˌdɪkt]");
+        //wi.pronunciation.append(QString(u8"\u82f1") + ": ['pleɪˌdɪkt]");
         wi.definition.append(QPair<QString, QString>(QString("MM"), QString("Screenshot (Mid Mouse)")));
         wi.definition.append(QPair<QString, QString>(QString("F1"), QString("Screenshot")));
         wi.definition.append(QPair<QString, QString>(QString("F2"), QString("Hide or Show")));
-        wi.definition.append(QPair<QString, QString>(QString("F3"), QString("Quit")));
+        wi.definition.append(QPair<QString, QString>(QString("F3"), QString("Exit")));
         return wi;
     }
 };

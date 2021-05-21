@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QFileInfo>
 #include <QDir>
+#include <QMenu>
 
 #include <QHotkey>
 #include <QPropertyAnimation>

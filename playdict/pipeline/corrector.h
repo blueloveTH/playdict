@@ -28,7 +28,7 @@ public:
 
     QString correct(QString src){
         std::string probStr = "";
-        std::string std_src = src.toStdString();
+        std::string std_src = src.toLower().toStdString();
         for(auto i=allWords.constBegin(); i!=allWords.constEnd(); i++){
             float dis = editDistance(*i, std_src);
             if(dis == 0)

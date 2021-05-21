@@ -19,7 +19,11 @@ Widget::Widget(QApplication* app, QWidget* parent) :
     connect(&pipeline, &ModelPipeline::finished, this, &Widget::onPipelineFinished);
 
     trayIcon = new QSystemTrayIcon(QIcon(QPixmap(":/ui/res/ico.png").scaled(32,32)), this);
-    connect(trayIcon, &QSystemTrayIcon::activated, [=]{setVisible(true);});
+    QMenu *trayMenu = new QMenu(this);
+    trayMenu->addAction("Show", [=]{setVisible(true);});
+    trayMenu->addAction("Exit", [=]{app->exit();});
+    trayIcon->setContextMenu(trayMenu);
+    //connect(trayIcon, &QSystemTrayIcon::activated, [=]{setVisible(true);});
     trayIcon->show();
 
     connect(this, SIGNAL(initialized()), this, SLOT(RegisterShortcuts()));
@@ -28,8 +32,9 @@ Widget::Widget(QApplication* app, QWidget* parent) :
     updateUi(WordInfo::helpWord());
 
     if(pipeline.labelingMode()){
-        QString text = "[Labeling Mode: ENABLED]";
+        QString text = "(Labeling Mode: ENABLED)";
         ui->pronBar->setText(text);
+        ui->pronBar->adjustSize();
     }
 }
 
