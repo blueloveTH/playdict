@@ -45,7 +45,7 @@ struct WordInfo{
     static WordInfo helpWord(){
         WordInfo wi("playdict");
         wi.pronunciation = QStringList();
-        wi.pronunciation.append("(Update: May 22, 2021)");
+        wi.pronunciation.append("(Update: May 23, 2021)");
         wi.definition.append(QPair<QString, QString>(QString("MM"), QString("Screenshot (Mid Mouse)")));
         wi.definition.append(QPair<QString, QString>(QString("F1"), QString("Screenshot")));
         wi.definition.append(QPair<QString, QString>(QString("F2"), QString("Hide or Show")));

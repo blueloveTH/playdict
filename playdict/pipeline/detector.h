@@ -15,8 +15,8 @@ public:
     }
 
     QImage crop(QImage img){
+        img = img.scaled(144*2, 32*2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         img.convertTo(QImage::Format_Grayscale8);
-        img = img.scaled(144*2, 32*2);
 
         Ort::Value inputTensor = session->createTensor<uchar>(img.bits(), std::vector<int64_t>{1,1,32*2,144*2});
         auto oList = session->run(&inputTensor);
@@ -35,7 +35,9 @@ public:
         }
         img_2.save("123.png");*/
 
-        img = img.copy(rect.yMin, rect.xMin, rect.ySpan(), rect.xSpan()).scaled(144, 32);
+        img = img.copy(rect.yMin, rect.xMin, rect.ySpan(), rect.xSpan());
+        img = img.scaled(144, 32, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        img.convertTo(QImage::Format_Grayscale8);
         return img;
     }
 
