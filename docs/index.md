@@ -7,7 +7,7 @@ playdict是一款极简的游戏查词工具。
 
 ![demo](./assets/imgs/demo/demo.png)
 
-\>> [（Github Release）](https://github.com/blueloveTH/playdict/releases/latest) [（百度网盘：提取码bqz2）](https://pan.baidu.com/s/1-64jkw9AwO5b-puIzcc5Gg)
+\>> [（Github Release）](https://github.com/blueloveTH/playdict/releases/latest) [（百度网盘：提取码bqz2）](https://pan.baidu.com/s/1cVgOJY4rXG1j0g8lj1GGCQ)
 
 ### 功能特性
 
