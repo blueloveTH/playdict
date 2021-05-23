@@ -148,6 +148,32 @@ void Widget::RegisterShortcuts(){
         if(e->button()==QHookMouseEvent::MiddleButton)
             screenShot();
     });
+
+    connect(new QHotkey(QKeySequence("F4"), true, this), &QHotkey::activated, [=]{
+        HWND hwnd = GetForegroundWindow();
+        if(hwnd == (HWND)this->winId()) return;
+
+        WCHAR* text = new WCHAR[32];
+        GetWindowText(hwnd, text, 32);
+
+        bool is_vis = isVisible();
+        setVisible(false);
+
+        QString descrption = QString::fromWCharArray(text);
+        descrption = "Convert window \"" + descrption + "\" to fullscreen borderless mode?";
+        auto btn = QMessageBox::question(
+                    this,
+                    QString("Confirm"),
+                    descrption
+                    );
+        if(btn == QMessageBox::StandardButton::Yes){
+            SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~( WS_THICKFRAME | WS_BORDER | WS_DLGFRAME | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU ) );
+            QSize size = ScreenUtil::getDesktopWH();
+            SetWindowPos(hwnd, NULL, 0, 0, size.width(), size.height(), SWP_SHOWWINDOW);
+        }
+
+        setVisible(is_vis);
+    });
 }
 
 void Widget::closeEvent(QCloseEvent *e){

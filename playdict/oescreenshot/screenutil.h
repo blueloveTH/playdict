@@ -11,9 +11,10 @@
 class ScreenUtil
 {
     static float scalingFactor_;
-    int static getDesktopHeight();
 public:
     ScreenUtil();
+
+    QSize static getDesktopWH();
 
     float static scalingFactor();
     void static setAutoScalingFactor(float a=1.0);

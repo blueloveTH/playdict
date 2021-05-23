@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     /// Force single instance
     QSharedMemory shared("apa");
     if(shared.attach())
-        return 0;
+        return 999;
     shared.create(8);
 
     ScreenUtil::setAutoScalingFactor();

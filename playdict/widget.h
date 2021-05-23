@@ -10,6 +10,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QMenu>
+#include <QMessageBox>
 
 #include <QHotkey>
 #include <QPropertyAnimation>
