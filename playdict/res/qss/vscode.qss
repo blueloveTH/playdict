@@ -1,0 +1,24 @@
+QWidget{
+    background: rgb(30, 30, 30);
+    color: rgb(207,207,207);
+}
+
+QMenu{
+    min-width: 60px;
+    font-size: 26px;
+}
+
+QMenu:selected{
+    background: rgb(50,50,50);
+}
+
+
+QPushButton{
+    border: 2px solid #8f8f8f;
+    border-radius: 5px;
+    min-width: 100px;
+}
+
+QPushButton:hover{
+    background: rgb(50,50,50);
+}

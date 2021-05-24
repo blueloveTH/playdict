@@ -10,4 +10,8 @@
         <file>res/eye.png</file>
         <file>res/ico.png</file>
     </qresource>
+    <qresource prefix="/ui/qss">
+        <file>res/qss/vscode.qss</file>
+        <file>res/qss/white.qss</file>
+    </qresource>
 </RCC>

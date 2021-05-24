@@ -4,6 +4,12 @@ Widget::Widget(QApplication* app, QWidget* parent) :
     QWidget(parent),
     ui(new Ui::Widget), app(app)
 {
+    /// Global stylesheet
+    QFile qssFile(":/ui/qss/res/qss/vscode.qss");
+    qssFile.open(QIODevice::ReadOnly);
+    app->setStyleSheet(qssFile.readAll());
+    qssFile.close();
+
     ui->setupUi(this);
 
     ScreenUtil::setWindowFlags(this);
@@ -16,7 +22,7 @@ Widget::Widget(QApplication* app, QWidget* parent) :
     QMenu *trayMenu = new QMenu(this);
     trayMenu->addAction("Exit", [=]{app->exit();});
     trayIcon->setContextMenu(trayMenu);
-    connect(trayIcon, &QSystemTrayIcon::activated, [=]{setVisible(true);});
+    connect(trayIcon, &QSystemTrayIcon::activated, [=]{setVisible(true); trayMenu->activateWindow();});
     trayIcon->show();
 
     /// Shortcuts
@@ -139,6 +145,7 @@ void Widget::RegisterShortcuts(){
     hotkeys.append( new QHotkey(QKeySequence("F1"), true, this) );
     hotkeys.append( new QHotkey(QKeySequence("F2"), true, this) );
     hotkeys.append( new QHotkey(QKeySequence("F3"), true, this) );
+    hotkeys.append( new QHotkey(QKeySequence("F4"), true, this) );
     connect(hotkeys[0], SIGNAL(activated()), this, SLOT(screenShot()));
     connect(hotkeys[1], SIGNAL(activated()), this, SLOT(toggleVisible()));
     connect(hotkeys[2], SIGNAL(activated()), this, SLOT(close()));
@@ -149,7 +156,7 @@ void Widget::RegisterShortcuts(){
             screenShot();
     });
 
-    connect(new QHotkey(QKeySequence("F4"), true, this), &QHotkey::activated, [=]{
+    connect(hotkeys[3], &QHotkey::activated, [=]{
         HWND hwnd = GetForegroundWindow();
         if(hwnd == (HWND)this->winId()) return;
 

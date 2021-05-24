@@ -50,9 +50,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">background: rgb(30, 30, 30);
-color: rgb(207,207,207);
-font: 19px &quot;微软雅黑&quot;;</string>
+   <string notr="true">font: 19px &quot;微软雅黑&quot;;</string>
   </property>
   <property name="windowFilePath">
    <string notr="true"/>
@@ -171,7 +169,7 @@ border: none;</string>
    </property>
    <property name="styleSheet">
     <string notr="true">border: none;
-</string>
+min-width: 0px;</string>
    </property>
    <property name="text">
     <string/>

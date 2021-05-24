@@ -49,5 +49,5 @@ void ScreenUtil::setWindowFlags(QWidget *widget){
 
     /// No focus
     HWND wid = (HWND)(widget->winId());
-        SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
+    SetWindowLong(wid, GWL_EXSTYLE, GetWindowLong(wid, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_COMPOSITED);
 }
