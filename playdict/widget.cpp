@@ -22,7 +22,12 @@ Widget::Widget(QApplication* app, QWidget* parent) :
     QMenu *trayMenu = new QMenu(this);
     trayMenu->addAction("Exit", [=]{app->exit();});
     trayIcon->setContextMenu(trayMenu);
-    connect(trayIcon, &QSystemTrayIcon::activated, [=]{setVisible(true); trayMenu->activateWindow();});
+    connect(trayIcon, &QSystemTrayIcon::activated, [=](QSystemTrayIcon::ActivationReason reason){
+        if(reason == QSystemTrayIcon::ActivationReason::DoubleClick)
+            setVisible(true);
+        if(reason == QSystemTrayIcon::ActivationReason::Context)
+            trayMenu->activateWindow();
+    });
     trayIcon->show();
 
     /// Shortcuts
@@ -158,15 +163,18 @@ void Widget::RegisterShortcuts(){
 
     connect(hotkeys[3], &QHotkey::activated, [=]{
         HWND hwnd = GetForegroundWindow();
+
+        if(hwnd == NULL) return;
         if(hwnd == (HWND)this->winId()) return;
 
         WCHAR* text = new WCHAR[32];
         GetWindowText(hwnd, text, 32);
 
-        bool is_vis = isVisible();
+        QString descrption = QString::fromWCharArray(text);
+        if(descrption.isEmpty()) return;
+
         setVisible(false);
 
-        QString descrption = QString::fromWCharArray(text);
         descrption = "Convert window \"" + descrption + "\" to fullscreen borderless mode?";
         auto btn = QMessageBox::question(
                     this,
@@ -179,7 +187,7 @@ void Widget::RegisterShortcuts(){
             SetWindowPos(hwnd, NULL, 0, 0, size.width(), size.height(), SWP_SHOWWINDOW);
         }
 
-        setVisible(is_vis);
+        setVisible(true);
     });
 }
 
