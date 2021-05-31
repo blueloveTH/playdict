@@ -32,7 +32,9 @@ playdict是一个极简的游戏查词工具。
 
 ### 性能测试
 
-待更新
+| 版本  | 样本量 | 准确率 | 平均延迟  |
+| ----- | ------ | ------ | --------- |
+| v0.32 | 241    | 85.71% | 300-600ms |
 
 ### TODO
 
@@ -40,6 +42,9 @@ playdict是一个极简的游戏查词工具。
 -   [ ] 在线更新
 -   [ ] MacOS版本移植
 
-### 关于开发者
+### 开发者
 
-待更新
+[@blueloveTH](https://github.com/blueloveTH)
+
+[@MikeBernardHan](https://github.com/MikeBernardHan)
+
